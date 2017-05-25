@@ -1,0 +1,52 @@
+---
+tests:
+    # config block provides section for global configs
+  - config:
+      # base_url is an optional field to remove some verbosity when testing apis.
+      # it is prepended to data.request.uri if set.
+      base_url: https://api.simplymeasured.com
+  - test:
+      # pick one of three modes for testing
+      #   missing = assert fields not missing
+      #   types   = assert fields not missing and field types
+      #   values  = assert fields not missing and field values
+      mode: missing | types | values
+      # the data block provides methods for providing data
+      data:
+        # 1. configuration for url requests
+        request:
+          uri: /v2/foo/bar
+          method: POST
+          body: '{"foo":"bar"}'
+          params:
+            - 'field=value'
+            - 'field2=value2'
+          headers:
+            - 'Authorization: key'
+
+        # 2. configuration for loading json from resource, great for unit tests
+        resource: /path/to/resource/food.json
+        # 3. configuration for loading file from file system
+        file: /path/to/file.json
+
+      expect:
+        # example for mode: missing
+#        - name
+#        - age
+#        - job:
+#            - id
+#            - title
+
+        # example for mode: types
+#        - name: string
+#        - age: int
+#        - job:
+#            id: int
+#            title: string
+
+        # example for mode: values
+        - name: kenny
+        - age: 30
+        - job:
+            id: 123456
+            title: Software Engineer

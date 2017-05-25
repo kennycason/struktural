@@ -11,7 +11,7 @@ class YamlBackedValidator {
     private val objectMapper = ObjectMapper(YAMLFactory())
 
     fun assert(yamlInputStream: InputStream) {
-        val yaml = objectMapper.readTree(yamlInputStream)
+        val yaml = objectMapper.readValue(yamlInputStream, Map::class.java)
         println(yaml)
     }
 

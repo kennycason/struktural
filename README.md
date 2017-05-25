@@ -9,7 +9,7 @@ Structural is designed to give flexible control over the level of desired testin
 | -------- | ----------- |
 | Assert Json Structure | A lightweight test to assert presence of fields |
 | Assert Json Types | A middleweight test to assert presence of fields and their types |
-| Assert Json Equals | A heavyweight test to assert presence of fields and their values |
+| Assert Json Values | A heavyweight test to assert presence of fields and their values |
 
 Structural provides two interfaces.
 1. A native Kotlin interface for running tests. (Interfaces natively with Java)
@@ -58,7 +58,27 @@ Structural.assertStructure(json,
                     listOf("id",
                            "title"))))
 
+// nested array of objects
+val json = """
+{
+    "languages": [
+        {
+            "name": "kotlin",
+            "coolness": 100
+        },
+        {
+            "name": "java",
+            "coolness": 50
+        }
+    ]
+}
+"""
+validator.assert(json,
+        listOf(Pair("languages",
+                listOf("name",
+                       "coolness"))))
 ```
+
 
 #### Assert Field Type Structure
 ```kotlin
@@ -99,7 +119,28 @@ Structural.assertTypes(json,
                 Pair("job", Object::class),
                 Pair("job", listOf(Pair("id", Number::class),
                            Pair("title", String::class)))))
+
+// nested array of objects
+val json = """
+{
+    "languages": [
+        {
+            "name": "kotlin",
+            "coolness": 100
+        },
+        {
+            "name": "java",
+            "coolness": 50
+        }
+    ]
+}
+"""
+validator.assert(json,
+        listOf(Pair("languages",
+                listOf(Pair("name", String::class),
+                       Pair("coolness", Number::class)))))
 ```
+
 #### Assert Field Values
 ```kotlin
 val json = """
@@ -129,7 +170,7 @@ Structural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("favorite_number", 2.718281828459045235)))
 
-// array example
+// simple array example
 val json = """
 {
     "numbers": [1,2,3,4,5,6]
@@ -137,6 +178,28 @@ val json = """
 """
 Structural.assertValues(json,
                 listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
+
+
+// nested array example
+val json = """
+{
+    "people": [
+        {
+            "name": "kenny",
+            "favorite_language": "kotlin",
+            "age": 64
+        },
+        {
+            "name": "martin",
+            "favorite_language": "kotlin",
+            "age": 92
+        }
+    ]
+}
+"""
+validator.assert(json,
+        listOf(Pair("people",
+                listOf(Pair("favorite_language", "kotlin")))))
 ```
 
 

@@ -95,4 +95,55 @@ class JsonValueValidatorTest {
                 listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6, 7))))
     }
 
+    @Test
+    fun nestedArrayObject() {
+        val json = """
+        {
+            "people": [
+                {
+                    "name": "kenny",
+                    "favorite_language": "kotlin",
+                    "age": 64
+                },
+                {
+                    "name": "martin",
+                    "favorite_language": "kotlin",
+                    "age": 92
+                },
+                {
+                    "name": "andrew",
+                    "favorite_language": "kotlin",
+                    "age": 13180
+                }
+            ]
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("people",
+                        listOf(Pair("favorite_language", "kotlin")))))
+    }
+
+
+    @Test(expected = StructuralException::class)
+    fun nestedArrayObjectDifferentValues() {
+        val json = """
+        {
+            "people": [
+                {
+                    "name": "kenny",
+                    "favorite_language": "kotlin",
+                    "age": 64
+                },
+                {
+                    "name": "martin",
+                    "favorite_language": "kotlin",
+                    "age": 92
+                }
+            ]
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("people",
+                        listOf(Pair("age", 64)))))
+    }
 }

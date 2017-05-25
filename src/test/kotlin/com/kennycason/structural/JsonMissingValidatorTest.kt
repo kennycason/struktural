@@ -83,4 +83,30 @@ class JsonMissingValidatorTest {
                         Pair("numbers", listOf("does_not_exist"))))
     }
 
+    @Test
+    fun nestedArrayObject() {
+        val json = """
+        {
+            "languages": [
+                {
+                    "name": "kotlin",
+                    "coolness": 100
+                },
+                {
+                    "name": "java",
+                    "coolness": 50
+                },
+                {
+                    "name": "javascript",
+                    "coolness": 25
+                }
+            ]
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("languages",
+                        listOf("name",
+                               "coolness"))))
+    }
+
 }

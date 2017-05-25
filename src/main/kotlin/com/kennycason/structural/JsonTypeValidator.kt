@@ -65,14 +65,16 @@ class JsonTypeValidator {
                         errors.add(Error(ErrorType.TYPE, "${normalizeFieldPath(path, fieldName)} is not of type $value. Found $jsonNodeType"))
                     }
 
-                } else if (value is Iterable<*>) { // is nested object
-                    val nestedObjectKey = fieldName
+                } else if (value is Iterable<*>) {
                     val nestedFields = value
-                    val nestedJsonNode = json.get(nestedObjectKey)
-                    if (nestedJsonNode.isArray) {
-                        throw StructuralException("Nested fields must be an Object. Found Array.")
+                    val nestedJsonNode = json.get(fieldName)
+                    if (nestedJsonNode.isArray) { // walk over each item in the array and apply the nested checks
+                        nestedJsonNode.forEach { node ->
+                            walkFields(node, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
+                        }
+                    } else { // is nested object
+                        walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
                     }
-                    walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + nestedObjectKey, errors)
 
                 } else {
                     throw IllegalStateException("An illegal state occurred in Structural. Unknown second value of Pair. Found ${value::class}")

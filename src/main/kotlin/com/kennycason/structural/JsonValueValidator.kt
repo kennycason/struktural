@@ -60,13 +60,18 @@ class JsonValueValidator {
                 }
 
                 val nestedJsonNode = json.get(fieldName)
-                if (value is Iterable<*>) { // is nested object, recur
-                    if (nestedJsonNode.isArray) {
-                        throw StructuralException("Nested fields must be an Object. Found Array.")
+                if (value is Iterable<*>) {
+                    if (nestedJsonNode.isArray) { // walk over each item in the array and apply the nested checks
+                        // it is rather odd to assert values across all items in an array of objects,
+                        // but perhaps useful for asserting a subset of the fields
+                        nestedJsonNode.forEach { node ->
+                            walkFields(node, value.requireNoNulls(), path + '/' + fieldName, errors)
+                        }
+                    } else {
+                        walkFields(nestedJsonNode, value.requireNoNulls(), path + '/' + fieldName, errors)
                     }
-                    walkFields(nestedJsonNode, value.requireNoNulls(), path + '/' + fieldName, errors)
 
-                } else {
+                } else { // is nested object, recur
                     val jsonNode = json.get(fieldName)
                     if (!jsonNodeValueValidator.validate(jsonNode, value)) {
                         errors.add(Error(ErrorType.VALUE, "Field ${normalizeFieldPath(path, fieldName)} value did not equal expected value: $value, actual value : $nestedJsonNode"))

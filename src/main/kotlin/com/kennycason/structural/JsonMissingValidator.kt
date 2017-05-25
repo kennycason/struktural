@@ -43,19 +43,21 @@ class JsonMissingValidator {
             } else if (field is Pair<*, *>) {
                 // nest object, validate and recur
                 validateNestedField(field)
-                val nestedObjectKey = field.first!! as String
+                val fieldName = field.first!! as String
                 val nestedFields = field.second as Iterable<*>
-                if (!json.has(nestedObjectKey)) {
-                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, nestedObjectKey)} missing."))
+                if (!json.has(fieldName)) {
+                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, fieldName)} missing."))
                     return@forEach
                 }
 
-                val nestedJsonNode = json.get(nestedObjectKey)
-                if (nestedJsonNode.isArray) {
-                    throw StructuralException("Nested fields must be an Object. Found Array.")
+                val nestedJsonNode = json.get(fieldName)
+                if (nestedJsonNode.isArray) { // walk over each item in the array and apply the nested checks
+                    nestedJsonNode.forEach { node ->
+                        walkFields(node, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
+                    }
+                } else { // is nested object, recur
+                    walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
                 }
-                walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + nestedObjectKey, errors)
-
             } else {
                 throw InvalidInputException("Input must either be a String field name, or a Iterable of fields. Found ${field::class}")
             }

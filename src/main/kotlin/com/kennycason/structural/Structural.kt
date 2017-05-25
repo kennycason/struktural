@@ -1,23 +1,29 @@
 package com.kennycason.structural
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
- * Created by kenny on 5/23/17.
+ * A helper class for using library
  */
-class Structural {
-    private val structureAsserter = JsonMissingValidator()
+object Structural {
+    private val jsonMissingValidator = JsonMissingValidator()
+    private val jsonTypeValidator = JsonTypeValidator()
+    private val jsonValueValidator = JsonValueValidator()
 
-    fun assertStructure(jsonString: String, fields: List<Any>) {
-        structureAsserter.assert(jsonString, fields)
-    }
+    fun assertStructure(jsonString: String, fields: List<Any>) = jsonMissingValidator.assert(jsonString, fields)
+    fun assertStructure(json: JsonNode, fields: List<Any>) = jsonMissingValidator.assert(json, fields)
+    fun validateStructure(jsonString: String, fields: List<Any>) = jsonMissingValidator.validate(jsonString, fields)
+    fun validateStructure(json: JsonNode, fields: List<Any>) = jsonMissingValidator.validate(json, fields)
 
-    fun assertTypes(fields: List<Pair<String, Any>>) {
+    fun assertTypes(jsonString: String, fields: Iterable<Pair<String, Any>>) = jsonTypeValidator.assert(jsonString, fields)
+    fun assertTypes(json: JsonNode, fields: Iterable<Pair<String, Any>>) = jsonTypeValidator.assert(json, fields)
+    fun validateTypes(jsonString: String, fields: Iterable<Pair<String, Any>>) = jsonTypeValidator.validate(jsonString, fields)
+    fun validateTypes(json: JsonNode, fields: Iterable<Pair<String, Any>>) = jsonTypeValidator.validate(json, fields)
 
-    }
-
-    fun assertValues(fields: List<Pair<String, Any>>) {
-
-    }
+    fun assertValues(jsonString: String, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.assert(jsonString, fields)
+    fun assertValues(json: JsonNode, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.assert(json, fields)
+    fun validateValues(jsonString: String, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.validate(jsonString, fields)
+    fun validateValues(json: JsonNode, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.validate(json, fields)
 
 }

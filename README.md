@@ -41,7 +41,6 @@ TODO
 
 #### Assert Field Structure
 ```kotlin
-val validator = JsonMissingValidator()
 val json = """
 {
     "name": "kenny",
@@ -52,7 +51,7 @@ val json = """
     }
 }
 """
-validator.assert(json,
+Structural.assertStructure(json,
         listOf("name",
                 "age",
                 Pair("job",
@@ -63,7 +62,6 @@ validator.assert(json,
 
 #### Assert Field Type Structure
 ```kotlin
-val validator = JsonTypeValidator()
 val json = """
 {
     "name": "kenny",
@@ -79,7 +77,7 @@ val json = """
 }
 """
 // strict number types
-validator.assert(json,
+Structural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Int::class),
                 Pair("shoe_size", Float::class),
@@ -91,7 +89,7 @@ validator.assert(json,
                                    Pair("title", String::class)))))
 
 // relaxed number types
-validator.assert(json,
+Structural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Number::class),
                 Pair("shoe_size", Number::class),
@@ -104,7 +102,6 @@ validator.assert(json,
 ```
 #### Assert Field Values
 ```kotlin
-val validator = JsonValueValidator()
 val json = """
 {
     "name": "kenny",
@@ -118,7 +115,7 @@ val json = """
     }
 }
 """
-validator.assert(json,
+Structural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("age", 64),
                 Pair("shoe_size", 10.5),
@@ -128,7 +125,7 @@ validator.assert(json,
                                    Pair("title", "Software Engineer")))))
 
 // only match partial
-validator.assert(json,
+Structural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("favorite_number", 2.718281828459045235)))
 
@@ -138,7 +135,7 @@ val json = """
     "numbers": [1,2,3,4,5,6]
 }
 """
-validator.assert(json,
+Structural.assertValues(json,
                 listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
 ```
 

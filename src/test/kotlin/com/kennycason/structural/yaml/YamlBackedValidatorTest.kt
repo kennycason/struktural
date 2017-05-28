@@ -1,5 +1,6 @@
 package com.kennycason.structural.yaml
 
+import org.junit.Ignore
 import org.junit.Test
 
 /**
@@ -21,7 +22,7 @@ class YamlBackedValidatorTest {
         validator.assert(javaClass.getResourceAsStream("resource_all_test.yml"))
     }
 
-    @Test
+    @Ignore
     fun urlManyTests() {
         validator.assert(javaClass.getResourceAsStream("url_all_test.yml"))
     }

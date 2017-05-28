@@ -30,10 +30,15 @@ This is an attempt to make writing integration tests more fun and remove some of
 I think this is especially important as the world continues to adopt Service Oriented Architectures.
 
 ## Where
-Structural is available on Maven Central.
+Structural is available on Maven Central. (Or will be very soon)
 
-TODO
-
+```xml
+<dependency>
+    <groupId>com.kennycason</groupId>
+    <artifactId>structural</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ## How
 

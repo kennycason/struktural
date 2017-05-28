@@ -5,11 +5,11 @@ Structural is a suite of tools written in Kotlin designed to make testing of API
 
 Structural is designed to give flexible control over the level of desired testing.
 
-| Features | Description |
-| -------- | ----------- |
-| Assert Json Structure | A lightweight test to assert presence of fields |
-| Assert Json Types | A middleweight test to assert presence of fields and their types |
-| Assert Json Values | A heavyweight test to assert presence of fields and their values |
+| Features               | Description                                                      |
+| ---------------------- | ---------------------------------------------------------------- |
+| Assert Json Structure  | A lightweight test to assert presence of fields                  |
+| Assert Json Types      | A middleweight test to assert presence of fields and their types |
+| Assert Json Values     | A heavyweight test to assert presence of fields and their values |
 
 Structural provides two interfaces.
 1. A native Kotlin interface for running tests. (Interfaces natively with Java)
@@ -37,7 +37,7 @@ TODO
 
 ## How
 
-### Kotlin Interface
+### Kotlin API
 
 #### Assert Field Structure
 ```kotlin
@@ -73,7 +73,7 @@ val json = """
     ]
 }
 """
-validator.assert(json,
+Structural.assertStructure(json,
         listOf(Pair("languages",
                 listOf("name",
                        "coolness"))))
@@ -135,7 +135,7 @@ val json = """
     ]
 }
 """
-validator.assert(json,
+Structural.assertTypes(json,
         listOf(Pair("languages",
                 listOf(Pair("name", String::class),
                        Pair("coolness", Number::class)))))
@@ -197,15 +197,112 @@ val json = """
     ]
 }
 """
-validator.assert(json,
+Structural.assertValues(json,
         listOf(Pair("people",
                 listOf(Pair("favorite_language", "kotlin")))))
 ```
 
 
-## When
-NOW
+### YAML API
+
+In addition to the native Kotlin/Java API Unit tests can also be configured via YAML files.
+
+A sample test of an API
+```yaml
+---
+config:
+  base_url: http://api.company.com
+
+tests:
+  -
+    mode: type
+    data:
+      request:
+        uri: /language/detection
+        method: POST
+        body: '{"data":[{"id":"1","text":"I am an english comment"}]}'
+        params:
+
+        headers:
+          - 'Content-Type: application/json'
+
+    expects:
+      - data:
+          id: string
+          language:
+            name: string
+            code: string
+            score: int
+            is_reliable: bool
+```
+
+The YAML format also provides options for validating json files, resources, as well as a variety of configurations.
+The YAML format and description of properties can be found below:
+```yaml
+---
+# config block provides section for global configs
+config:
+  # base_url is an optional field to remove some verbosity when testing apis.
+  # it is prepended to data.request.uri if set.
+  base_url: https://api.foobar.com
+  port: 8080
+
+tests:
+  - # array of tests
+    # pick one of three modes for testing
+    #   structure = assert fields not missing
+    #   type      = assert fields not missing and field types
+    #   value     = assert fields not missing and field values
+    mode: structure | type | value
+    # the data block provides methods for providing data
+    data:
+      # 1. configuration for url requests
+      request:
+        uri: /v2/foo/bar
+        method: POST
+        body: '{"foo":"bar"}'
+        params:
+          - 'field=value'
+          - 'field2=value2'
+        headers:
+          - 'Authorization: key'
+
+      # 2. configuration for loading json from resource, great for unit tests
+      resource: /path/to/resource/food.json
+      # 3. configuration for loading file from file system
+      file: /path/to/file.json
+
+    expects:
+      # note that you must choose ONE of the below formats
+      # example for mode: structure
+     - name
+     - age
+     - job:
+       - id
+       - title
+
+      # example for mode: types
+     - name: string
+     - age: int
+     - job:
+         id: int
+         title: string
+
+      # example for mode: values
+      - name: kenny
+      - age: 30
+      - job:
+          id: 123456
+          title: Software Engineer
+```
 
 
 ## Notes
-Currently the project has a hard dependency on Retrofit and Jackson Json parsing. Eventually these may be extracted out so that you can choose your library.
+- Currently the project has a hard dependency on Apache Http Client and Jackson Json parsing. Eventually these *may* be extracted out so that you can choose your library.
+- Much of the inernal code will be cleaned up and better organized in time. This was a few day proof-of-concept project.
+- Better error handling/logging to come.
+- I'm looking for ideas on more features. e.g.
+     - Maven Plugin to automatically scan resource for yaml test files, or some similar concept to further facility configuring of tests
+     - extra validation functions
+
+

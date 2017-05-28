@@ -1,0 +1,14 @@
+---
+tests:
+  -
+    mode: type
+    data:
+      resource: /com/kennycason/structural/json/person_sample_response.json
+
+    expects:
+      - name: string
+      - age: int
+      - job:
+          id: int
+          title: string
+

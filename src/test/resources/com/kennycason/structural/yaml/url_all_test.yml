@@ -1,0 +1,27 @@
+---
+config:
+  base_url: http://langley.prod.pdx.intsm.net
+  port: 8080
+
+tests:
+  -
+    mode: type
+    data:
+      request:
+        uri: /detection
+        method: POST
+        body: '{"items":[{"id":"1","text":"I am a happy person"}]}'
+        params:
+
+        headers:
+          - 'Content-Type: application/json'
+
+    expects:
+      - items:
+          id: string
+          language:
+            name: string
+            code: string
+            score: int
+            is_reliable: bool
+

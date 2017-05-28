@@ -1,0 +1,54 @@
+---
+# config block provides section for global configs
+config:
+  # base_url is an optional field to remove some verbosity when testing apis.
+  # it is prepended to data.request.uri if set.
+  base_url: https://api.foobar.com
+  port: 8080
+
+tests:
+  - # array of tests
+    # pick one of three modes for testing
+    #   structure = assert fields not missing
+    #   type      = assert fields not missing and field types
+    #   value     = assert fields not missing and field values
+    mode: structure | type | value
+    # the data block provides methods for providing data
+    data:
+      # 1. configuration for url requests
+      request:
+        uri: /v2/foo/bar
+        method: POST
+        body: '{"foo":"bar"}'
+        params:
+          - 'field=value'
+          - 'field2=value2'
+        headers:
+          - 'Authorization: key'
+
+      # 2. configuration for loading json from resource, great for unit tests
+      resource: /path/to/resource/food.json
+      # 3. configuration for loading file from file system
+      file: /path/to/file.json
+
+    expects:
+      # example for mode: structure
+#     - name
+#     - age
+#     - job:
+#       - id
+#       - title
+
+      # example for mode: types
+#     - name: string
+#     - age: int
+#     - job:
+#         id: int
+#         title: string
+
+      # example for mode: values
+      - name: kenny
+      - age: 30
+      - job:
+          id: 123456
+          title: Software Engineer

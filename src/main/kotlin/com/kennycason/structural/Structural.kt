@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
- * A helper class for using library
+ * A transform class for using library
  */
 object Structural {
     private val jsonMissingValidator = JsonMissingValidator()

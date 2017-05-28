@@ -6,8 +6,8 @@ import org.junit.Test
 /**
  * Created by kenny on 5/23/17.
  */
-class JsonMissingValidatorTest {
-    private val validator = JsonMissingValidator()
+class JsonStructureValidatorTest {
+    private val validator = JsonStructureValidator()
 
     @Test
     fun emptyTest() {

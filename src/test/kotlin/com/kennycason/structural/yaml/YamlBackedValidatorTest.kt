@@ -12,7 +12,7 @@ class YamlBackedValidatorTest {
 
     @Test
     fun resourceSingleTest() {
-        //validator.assert(javaClass.getResourceAsStream("resource_structure_test.yml"))
+        validator.assert(javaClass.getResourceAsStream("resource_structure_test.yml"))
         validator.assert(javaClass.getResourceAsStream("resource_types_test.yml"))
         validator.assert(javaClass.getResourceAsStream("resource_values_test.yml"))
     }

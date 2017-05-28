@@ -10,7 +10,7 @@ import com.kennycason.structural.exception.StructuralException
 /**
  * Test fields not missing
  */
-class JsonMissingValidator {
+class JsonStructureValidator {
     private val objectMapper = ObjectMapper()
 
     fun assert(jsonString: String, fields: Iterable<Any>) = assert(objectMapper.readTree(jsonString), fields)

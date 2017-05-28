@@ -43,11 +43,14 @@ class YamlBackedValidator {
         tests.forEach { test ->
             when (test.mode) {
                 Mode.STRUCTURE ->
-                    errors.addAll(Structural.validateStructure(test.jsonLoader.load(), test.expects).errors)
+                    errors.addAll(
+                            Structural.validateStructure(test.jsonLoader.load(), test.expects).errors)
                 Mode.TYPE ->
-                    errors.addAll(Structural.validateTypes(test.jsonLoader.load(), test.expects).errors)
+                    errors.addAll(
+                            Structural.validateTypes(test.jsonLoader.load(), test.expects as Iterable<Pair<String, Any>>).errors)
                 Mode.VALUE ->
-                    errors.addAll(Structural.validateValues(test.jsonLoader.load(), test.expects).errors)
+                    errors.addAll(
+                            Structural.validateValues(test.jsonLoader.load(), test.expects as Iterable<Pair<String, Any>>).errors)
             }
         }
         if (errors.size > 0) {

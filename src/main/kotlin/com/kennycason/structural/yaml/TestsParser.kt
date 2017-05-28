@@ -40,17 +40,15 @@ class TestsParser {
 
     private fun parseTest(test: Map<String, Any>, config: Config): TestCase {
         val mode = parseMode(test)
-        val expectsMapTransform = ExpectsMapTransform(selectValueTransform(mode))
+        val expectsMapTransform = ExpectsMapTransform(mode)
         return TestCase(
                 config = config,
                 mode = mode,
                 jsonLoader = parseJsonLoader(test, config),
-                expects = expectsMapTransform.transform(test.get("expects") as List<Map<String, Any>>))
-    }
-
-    private fun selectValueTransform(mode: Mode) = when (mode) {
-        Mode.TYPE -> TypeValueTransform()
-        else -> IdentityValueTransform()
+                expects = when (mode) {
+                    Mode.STRUCTURE -> expectsMapTransform.transformToAny(test.get("expects") as Iterable<Any>)
+                    Mode.TYPE, Mode.VALUE -> expectsMapTransform.transformToPairs(test.get("expects") as Iterable<Map<String, Any>>)
+                })
     }
 
     private fun parseMode(test: Map<String, Any>): Mode {

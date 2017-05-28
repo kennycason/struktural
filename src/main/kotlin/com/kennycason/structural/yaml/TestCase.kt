@@ -8,4 +8,4 @@ import com.kennycason.structural.yaml.data.JsonLoader
 data class TestCase(val config: Config,
                     val mode: Mode,
                     val jsonLoader: JsonLoader,
-                    val expects: List<Pair<String, Any>>)
+                    val expects: Iterable<Any>)

@@ -9,6 +9,6 @@ tests:
       - name
       - age
       - job:
-          id
-          title
+          - id
+          - title
 

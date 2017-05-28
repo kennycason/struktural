@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.kennycason.structural.Mode
 import com.kennycason.structural.Structural
+import com.kennycason.structural.ValidationResult
 import com.kennycason.structural.error.Error
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.exception.StructuralException
@@ -34,6 +36,13 @@ class YamlBackedValidator {
     }
 
     fun assert(yamlInputStream: InputStream) {
+        val validationResult = validate(yamlInputStream)
+        if (!validationResult.valid) {
+            throw StructuralException(validationResult.errors.joinToString("\n"))
+        }
+    }
+
+    fun validate(yamlInputStream: InputStream): ValidationResult {
         val testModel: Map<String, Any> = yamlObjectMapper.readValue(yamlInputStream,
                 object: TypeReference<Map<String, Any>>() {})
         val config = parseConfig(testModel)
@@ -41,21 +50,29 @@ class YamlBackedValidator {
 
         val errors = mutableListOf<Error>()
         tests.forEach { test ->
+            val response = test.jsonLoader.load()
             when (test.mode) {
-                Mode.STRUCTURE ->
-                    errors.addAll(
-                            Structural.validateStructure(test.jsonLoader.load(), test.expects).errors)
-                Mode.TYPE ->
-                    errors.addAll(
-                            Structural.validateTypes(test.jsonLoader.load(), test.expects as Iterable<Pair<String, Any>>).errors)
-                Mode.VALUE ->
-                    errors.addAll(
-                            Structural.validateValues(test.jsonLoader.load(), test.expects as Iterable<Pair<String, Any>>).errors)
+                Mode.STRUCTURE -> {
+                    val result = Structural.validateStructure(response, test.expects)
+                    if (!result.valid) {
+                        errors.addAll(result.errors)
+                    }
+                }
+                Mode.TYPE -> {
+                    val result = Structural.validateTypes(response, test.expects as Iterable<Pair<String, Any>>)
+                    if (!result.valid) {
+                        errors.addAll(result.errors)
+                    }
+                }
+                Mode.VALUE -> {
+                    val result = Structural.validateValues(response, test.expects as Iterable<Pair<String, Any>>)
+                    if (!result.valid) {
+                        errors.addAll(result.errors)
+                    }
+                }
             }
         }
-        if (errors.size > 0) {
-            throw StructuralException(errors.joinToString("\n"))
-        }
+        return ValidationResult(errors.isEmpty(), errors)
     }
 
     private fun parseConfig(testModel: Map<String, Any>): Config {

@@ -2,7 +2,6 @@ package com.kennycason.structural
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kennycason.structural.error.ErrorType
 import com.kennycason.structural.error.Error
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.exception.StructuralException
@@ -37,7 +36,7 @@ class JsonStructureValidator {
         fields.forEach { field ->
             if (field is String) {
                 if (!json.has(field)) {
-                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, field)} missing."))
+                    errors.add(Error(Mode.STRUCTURE, "Field ${normalizeFieldPath(path, field)} missing."))
                 }
 
             } else if (field is Pair<*, *>) {
@@ -46,7 +45,7 @@ class JsonStructureValidator {
                 val fieldName = field.first!! as String
                 val nestedFields = field.second as Iterable<*>
                 if (!json.has(fieldName)) {
-                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, fieldName)} missing."))
+                    errors.add(Error(Mode.STRUCTURE, "Field ${normalizeFieldPath(path, fieldName)} missing."))
                     return@forEach
                 }
 
@@ -59,7 +58,7 @@ class JsonStructureValidator {
                     walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
                 }
             } else {
-                throw InvalidInputException("Input must either be a String field name, or a Iterable of fields. Found ${field::class}")
+                throw InvalidInputException("Input must either be a String field name, or a Iterable of fields. Found ${field::class.simpleName?.toLowerCase()}")
             }
         }
     }
@@ -73,10 +72,10 @@ class JsonStructureValidator {
         }
         // test structure of Pair<String, Any>
         if (field.first !is String) {
-            throw InvalidInputException("First value for nested input must be a String. found ${field.first!!::class}")
+            throw InvalidInputException("First value for nested input must be a String. found ${field.first!!::class.simpleName?.toLowerCase()}")
         }
         if (field.second !is Iterable<*>) {
-            throw InvalidInputException("First value for nested input must be a Iterable. found ${field.second!!::class}")
+            throw InvalidInputException("First value for nested input must be a Iterable. found ${field.second!!::class.simpleName?.toLowerCase()}")
         }
     }
 

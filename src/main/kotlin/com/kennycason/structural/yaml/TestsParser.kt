@@ -1,6 +1,7 @@
 package com.kennycason.structural.yaml
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.kennycason.structural.Mode
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.yaml.data.FileJsonLoader
 import com.kennycason.structural.yaml.data.InputStreamJsonLoader
@@ -93,6 +94,7 @@ class TestsParser {
         }
         return Request(
                 uri = requestNode.get("uri") as String,
+                method = if (requestNode.contains("method")) { requestNode.get("method") as String } else { "GET" },
                 parameters = parseParameters(requestNode),
                 body = if (requestNode.contains("body")) { requestNode.get("body") as String } else { null },
                 headers = parseHeaders(requestNode))

@@ -1,5 +1,6 @@
 package com.kennycason.structural.yaml
 
+import com.kennycason.structural.Mode
 import com.kennycason.structural.yaml.data.JsonLoader
 
 /**

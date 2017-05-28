@@ -2,6 +2,7 @@ package com.kennycason.structural
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.kennycason.structural.yaml.YamlBackedValidator
 
 /**
  * A transform class for using library
@@ -10,6 +11,7 @@ object Structural {
     private val jsonMissingValidator = JsonStructureValidator()
     private val jsonTypeValidator = JsonTypeValidator()
     private val jsonValueValidator = JsonValueValidator()
+    private val yamlBackedValidator = YamlBackedValidator()
 
     fun assertStructure(jsonString: String, fields: Iterable<Any>) = jsonMissingValidator.assert(jsonString, fields)
     fun assertStructure(json: JsonNode, fields: Iterable<Any>) = jsonMissingValidator.assert(json, fields)

@@ -1,13 +1,13 @@
-package com.kennycason.structural.error
+package com.kennycason.structural
 
 /**
- * Created by kenny on 5/24/17.
+ * Created by kenny on 5/25/17.
  */
-enum class ErrorType {
+enum class Mode {
     /**
      * The field is missing in the json block
      */
-    MISSING,
+    STRUCTURE,
     /**
      * The asserted type of the field is different.
      */

@@ -23,8 +23,9 @@ class YamlBackedValidatorTest {
     }
 
     @Ignore
-    fun urlManyTests() {
-        validator.assert(javaClass.getResourceAsStream("url_all_test.yml"))
+    fun urlTest() {
+        validator.assert(javaClass.getResourceAsStream("url_sample_test.yml"))
+        validator.assert(javaClass.getResourceAsStream("url_sample2_test.yml"))
     }
 
 }

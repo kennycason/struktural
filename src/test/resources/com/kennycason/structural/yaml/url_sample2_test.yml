@@ -1,0 +1,29 @@
+---
+
+tests:
+  -
+    mode: type
+    data:
+      request:
+        uri: https://api.apisrus.com/labels
+        method: GET
+        params:
+          - 'include_inactive=true'
+        headers:
+          - 'Authorization: Bearer <AUTH_TOKEN>'
+          - 'Content-Type: application/json'
+
+    expects:
+      - data:
+          type: string
+          id: string
+          attributes:
+            account_id: string
+            name: string
+            color: string
+            created_at: string
+            created_by: string
+            updated_at: string
+            updated_by: string
+            active: bool
+

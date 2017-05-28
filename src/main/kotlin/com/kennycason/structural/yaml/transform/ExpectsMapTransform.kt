@@ -1,7 +1,7 @@
 package com.kennycason.structural.yaml.transform
 
 import com.kennycason.structural.exception.InvalidInputException
-import com.kennycason.structural.yaml.Mode
+import com.kennycason.structural.Mode
 
 /**
  * This class transforms data from:

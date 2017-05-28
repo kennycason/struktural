@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.kennycason.structural.error.Error
-import com.kennycason.structural.error.ErrorType
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.exception.StructuralException
 import com.kennycason.structural.json.JsonNodeTypeValidator
@@ -53,7 +52,7 @@ class JsonTypeValidator {
                 val fieldName = field.first!! as String
                 val value = field.second!!
                 if (!json.has(fieldName)) {
-                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, fieldName)} missing."))
+                    errors.add(Error(Mode.STRUCTURE, "Field ${normalizeFieldPath(path, fieldName)} missing."))
                     return@forEach
                 }
 
@@ -62,7 +61,7 @@ class JsonTypeValidator {
                     val jsonNode = json.get(fieldName)
                     val jsonNodeType = jsonNode.nodeType!!
                     if (!jsonNodeTypeValidator.validate(jsonNode, value)) {
-                        errors.add(Error(ErrorType.TYPE, "${normalizeFieldPath(path, fieldName)} is not of type $value. Found $jsonNodeType"))
+                        errors.add(Error(Mode.TYPE, "Field [${normalizeFieldPath(path, fieldName)}] is not of type ${value.simpleName!!.toLowerCase()}. Found ${jsonNodeType.toString().toLowerCase()}"))
                     }
 
                 } else if (value is Iterable<*>) {
@@ -81,7 +80,7 @@ class JsonTypeValidator {
                 }
 
             } else {
-                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert, for an Iterable for nested objects. Found ${field::class}")
+                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert, for an Iterable for nested objects. Found ${field::class.simpleName?.toLowerCase()}")
             }
         }
     }
@@ -97,11 +96,11 @@ class JsonTypeValidator {
         }
         // test structure of Pair<String, Any>
         if (key !is String) {
-            throw InvalidInputException("First value for nested input must be a String. found ${key::class}")
+            throw InvalidInputException("First value for nested input must be a String. found ${key::class.simpleName?.toLowerCase()}")
         }
         if (value !is Iterable<*> && value !is KClass<*>) {
             throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert, for an Iterable for nested objects. " +
-                    "Found <${key::class}, ${value::class}>")
+                    "Found <${key::class.simpleName?.toLowerCase()}, ${value::class.simpleName?.toLowerCase()}>")
         }
     }
 

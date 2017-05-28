@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.kennycason.structural.error.Error
-import com.kennycason.structural.error.ErrorType
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.exception.StructuralException
 import com.kennycason.structural.json.JsonNodeValueValidator
@@ -55,7 +54,7 @@ class JsonValueValidator {
                 val value = field.second!!
 
                 if (!json.has(fieldName)) {
-                    errors.add(Error(ErrorType.MISSING, "Field ${normalizeFieldPath(path, fieldName)} missing."))
+                    errors.add(Error(Mode.STRUCTURE, "Field ${normalizeFieldPath(path, fieldName)} missing."))
                     return@forEach
                 }
 
@@ -74,7 +73,7 @@ class JsonValueValidator {
                 } else { // is nested object, recur
                     val jsonNode = json.get(fieldName)
                     if (!jsonNodeValueValidator.validate(jsonNode, value)) {
-                        errors.add(Error(ErrorType.VALUE, "Field ${normalizeFieldPath(path, fieldName)} value did not equal expected value: $value, actual value : $nestedJsonNode"))
+                        errors.add(Error(Mode.VALUE, "Field ${normalizeFieldPath(path, fieldName)} value did not equal expected value: $value, actual value : $nestedJsonNode"))
                     }
                 }
 
@@ -95,7 +94,7 @@ class JsonValueValidator {
         }
         // test structure of Pair<String, Any>
         if (key !is String) {
-            throw InvalidInputException("First value for nested input must be a String. found ${key::class}")
+            throw InvalidInputException("First value for nested input must be a String. found ${key::class.simpleName?.toLowerCase()}")
         }
         // the value can be any type since it's comparing equality, so don't check
     }

@@ -17,12 +17,12 @@ import java.nio.charset.Charset
 /**
  * Created by kenny on 5/25/17.
  */
-class HttpRequests(private val objectMapper: ObjectMapper,
-                   private val baseUrl: String,
-                   private val port: Int) {
+class HttpRequests() {
+    private val objectMapper = ObjectMapper()
 
-    fun get(endpoint: String, headers: Array<Header>): JsonNode  {
-        val request = HttpGet(buildUrl(endpoint))
+    fun get(uri: URI,
+            headers: Array<Header>): JsonNode  {
+        val request = HttpGet(uri)
         request.setHeaders(headers)
 
         return objectMapper.readTree(
@@ -32,10 +32,10 @@ class HttpRequests(private val objectMapper: ObjectMapper,
                         .getEntity().getContent())
     }
 
-    fun post(endpoint: String,
+    fun post(uri: URI,
              headers: Array<Header>,
              data: String?): JsonNode {
-        val request = HttpPost(buildUrl(endpoint))
+        val request = HttpPost(uri)
         request.setHeaders(headers)
         if (data != null) {
             request.setEntity(StringEntity(data))
@@ -48,12 +48,14 @@ class HttpRequests(private val objectMapper: ObjectMapper,
                         .getEntity().getContent())
     }
 
-    fun patch(endpoint: String,
-                  headers: Array<Header>,
-                  data: Any): JsonNode {
-        val request = HttpPatch(buildUrl(endpoint))
+    fun patch(uri: URI,
+              headers: Array<Header>,
+              data: String?): JsonNode {
+        val request = HttpPatch(uri)
         request.setHeaders(headers)
-        request.setEntity(ByteArrayEntity(objectMapper.writeValueAsBytes(data)))
+        if (data != null) {
+            request.setEntity(StringEntity(data))
+        }
 
         return objectMapper.readTree(
                 HttpClientBuilder.create()
@@ -62,9 +64,9 @@ class HttpRequests(private val objectMapper: ObjectMapper,
                         .getEntity().getContent())
     }
 
-    fun delete(endpoint: String,
-                   headers: Array<Header>): JsonNode {
-        val request = HttpDelete(buildUrl(endpoint))
+    fun delete(uri: URI,
+               headers: Array<Header>): JsonNode {
+        val request = HttpDelete(uri)
         request.setHeaders(headers)
 
         return objectMapper.readTree(
@@ -72,11 +74,6 @@ class HttpRequests(private val objectMapper: ObjectMapper,
                         .build()
                         .execute(request)
                         .getEntity().getContent())
-    }
-
-    private fun buildUrl(endpoint: String): String {
-        if (port == 0) { return baseUrl + endpoint }
-        return baseUrl + ':' + port + endpoint
     }
 
 }

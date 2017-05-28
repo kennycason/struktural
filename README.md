@@ -207,7 +207,7 @@ Structural.assertValues(json,
 
 In addition to the native Kotlin/Java API Unit tests can also be configured via YAML files.
 
-A sample test of an API
+Example API Test #1
 ```yaml
 ---
 config:
@@ -221,8 +221,6 @@ tests:
         uri: /language/detection
         method: POST
         body: '{"data":[{"id":"1","text":"I am an english comment"}]}'
-        params:
-
         headers:
           - 'Content-Type: application/json'
 
@@ -234,6 +232,37 @@ tests:
             code: string
             score: int
             is_reliable: bool
+```
+
+Example API Test #2
+```yaml
+---
+tests:
+  -
+    mode: type
+    data:
+      request:
+        uri: https://api.company.com/labels
+        method: GET
+        params:
+          - 'include_inactive=true'
+        headers:
+          - 'Authorization: Bearer <AUTH_TOKEN>'
+          - 'Content-Type: application/json'
+
+    expects:
+      - data:
+          type: string
+          id: string
+          attributes:
+            account_id: string
+            name: string
+            color: string
+            created_at: string
+            created_by: string
+            updated_at: string
+            updated_by: string
+            active: bool
 ```
 
 The YAML format also provides options for validating json files, resources, as well as a variety of configurations.
@@ -298,11 +327,12 @@ tests:
 
 
 ## Notes
-- Currently the project has a hard dependency on Apache Http Client and Jackson Json parsing. Eventually these *may* be extracted out so that you can choose your library.
-- Much of the inernal code will be cleaned up and better organized in time. This was a few day proof-of-concept project.
+- Pass context from test-to-test. Allow a response form one test to drive the next test.
 - Better error handling/logging to come.
 - I'm looking for ideas on more features. e.g.
      - Maven Plugin to automatically scan resource for yaml test files, or some similar concept to further facility configuring of tests
      - extra validation functions
+- Currently the project has a hard dependency on Apache Http Client and Jackson Json parsing. Eventually these *may* be extracted out so that you can choose your library.
+- Much of the inernal code will be cleaned up and better organized in time. This was a few day proof-of-concept project.
 
 

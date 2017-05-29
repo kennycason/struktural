@@ -361,6 +361,8 @@ Structural.assertYaml(yaml)
 
 ### Kotlin + Structural + Spek
 
+A small example using JetBrain's [Spek Framework](http://spekframework.org/)
+
 ```kotlin
 class LangleyTests : Spek( {
 

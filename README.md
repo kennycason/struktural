@@ -359,6 +359,35 @@ tests:
 Structural.assertYaml(yaml)
 ```
 
+### Kotlin + Structural + Spek
+
+```kotlin
+class LangleyTests : Spek( {
+
+    describe("Language Classification API Tests") {
+        val json = HttpJsonLoader(
+                request = Request(uri = "http://api.service.com/language/detection",
+                        method = HttpMethod.POST,
+                        body = """{"items":[{"id":"1","text":"I am a happy person"}]}""",
+                        headers = listOf<Header>(BasicHeader("Content-Type", "application/json"))))
+                .load()
+
+        it("Response structure & types") {
+            Structural.assertTypes(json,
+                    listOf(Pair("items", listOf(
+                            Pair("id", String::class),
+                            Pair("language", listOf(
+                                    Pair("name", String::class),
+                                    Pair("code", String::class),
+                                    Pair("score", Int::class),
+                                    Pair("is_reliable", Boolean::class)))))))
+        }
+    }
+
+})
+```
+
+
 ## Notes
 - Pass context from test-to-test. Allow a response form one test to drive the next test.
 - Better error handling/logging to come.

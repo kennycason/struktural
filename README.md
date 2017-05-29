@@ -354,6 +354,7 @@ tests:
       - job:
           id: int
           title: string
+"""
 
 Structural.assertYaml(yaml)
 ```

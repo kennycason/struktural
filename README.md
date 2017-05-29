@@ -36,7 +36,7 @@ Structural is available on Maven Central. (Or will be very soon)
 <dependency>
     <groupId>com.kennycason</groupId>
     <artifactId>structural</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -330,6 +330,33 @@ tests:
           title: Software Engineer
 ```
 
+#### Yaml Test Examples
+
+Assert tests in YAML file are valid
+```kotlin
+Structural.assertYaml(javaClass.getResourceAsStream("/path/to/resource/my_test.yml"))
+```
+
+
+Test against raw YAML String
+```kotlin
+val yaml = """
+---
+tests:
+  -
+    mode: type
+    data:
+      resource: /com/kennycason/structural/json/person_sample_response.json
+
+    expects:
+      - name: string
+      - age: int
+      - job:
+          id: int
+          title: string
+
+Structural.assertYaml(yaml)
+```
 
 ## Notes
 - Pass context from test-to-test. Allow a response form one test to drive the next test.

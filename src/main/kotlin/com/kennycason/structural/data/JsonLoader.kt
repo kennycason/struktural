@@ -1,4 +1,4 @@
-package com.kennycason.structural.yaml.data
+package com.kennycason.structural.data
 
 import com.fasterxml.jackson.databind.JsonNode
 

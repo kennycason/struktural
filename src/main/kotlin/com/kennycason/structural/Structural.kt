@@ -3,6 +3,7 @@ package com.kennycason.structural
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kennycason.structural.yaml.YamlBackedValidator
+import java.io.InputStream
 
 /**
  * A transform class for using library
@@ -28,4 +29,8 @@ object Structural {
     fun validateValues(jsonString: String, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.validate(jsonString, fields)
     fun validateValues(json: JsonNode, fields: Iterable<Pair<String, Any>>) = jsonValueValidator.validate(json, fields)
 
+    fun assertYaml(yamlString: String) = yamlBackedValidator.assert(yamlString)
+    fun assertYaml(yamlInputStream: InputStream) = yamlBackedValidator.assert(yamlInputStream)
+    fun validateYaml(yamlString: String) = yamlBackedValidator.validate(yamlString)
+    fun validateYaml(yamlInputStream: InputStream) = yamlBackedValidator.validate(yamlInputStream)
 }

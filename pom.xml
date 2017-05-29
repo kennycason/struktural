@@ -6,7 +6,7 @@
 
     <groupId>com.kennycason</groupId>
     <artifactId>structural</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Structural</name>
     <description>Structural - API Testing Made Easy - Kotlin</description>
     <url>https://github.com/kennycason/structural</url>

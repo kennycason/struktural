@@ -80,7 +80,7 @@ class JsonTypeValidator {
                 }
 
             } else {
-                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert, for an Iterable for nested objects. Found ${field::class.simpleName?.toLowerCase()}")
+                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert oor an Iterable for nested objects. Found ${field::class.simpleName?.toLowerCase()}")
             }
         }
     }
@@ -99,7 +99,7 @@ class JsonTypeValidator {
             throw InvalidInputException("First value for nested input must be a String. found ${key::class.simpleName?.toLowerCase()}")
         }
         if (value !is Iterable<*> && value !is KClass<*>) {
-            throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert, for an Iterable for nested objects. " +
+            throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert or an Iterable for nested objects. " +
                     "Found <${key::class.simpleName?.toLowerCase()}, ${value::class.simpleName?.toLowerCase()}>")
         }
     }

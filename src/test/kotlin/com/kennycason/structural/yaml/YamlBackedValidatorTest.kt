@@ -1,5 +1,6 @@
 package com.kennycason.structural.yaml
 
+import com.kennycason.structural.Structural
 import org.junit.Ignore
 import org.junit.Test
 
@@ -26,6 +27,34 @@ class YamlBackedValidatorTest {
     fun urlTest() {
         validator.assert(javaClass.getResourceAsStream("url_sample_test.yml"))
         validator.assert(javaClass.getResourceAsStream("url_sample2_test.yml"))
+    }
+
+    @Test
+    fun structuralInputStreamHelper() {
+        Structural.assertYaml(javaClass.getResourceAsStream("resource_structure_test.yml"))
+        Structural.assertYaml(javaClass.getResourceAsStream("resource_types_test.yml"))
+        Structural.assertYaml(javaClass.getResourceAsStream("resource_values_test.yml"))
+        Structural.assertYaml(javaClass.getResourceAsStream("resource_all_test.yml"))
+    }
+
+    @Test
+    fun structuralRawStringHelper() {
+        val yaml = """
+            |---
+            |tests:
+            |  -
+            |    mode: type
+            |    data:
+            |      resource: /com/kennycason/structural/json/person_sample_response.json
+            |
+            |    expects:
+            |      - name: string
+            |      - age: int
+            |      - job:
+            |          id: int
+            |          title: string
+        """.trimMargin()
+        Structural.assertYaml(yaml)
     }
 
 }

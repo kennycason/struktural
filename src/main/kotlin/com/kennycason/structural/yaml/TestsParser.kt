@@ -3,11 +3,12 @@ package com.kennycason.structural.yaml
 import com.fasterxml.jackson.databind.JsonNode
 import com.kennycason.structural.Mode
 import com.kennycason.structural.exception.InvalidInputException
-import com.kennycason.structural.yaml.data.FileJsonLoader
-import com.kennycason.structural.yaml.data.InputStreamJsonLoader
-import com.kennycason.structural.yaml.data.JsonLoader
-import com.kennycason.structural.yaml.data.web.HttpJsonLoader
-import com.kennycason.structural.yaml.data.web.Request
+import com.kennycason.structural.data.FileJsonLoader
+import com.kennycason.structural.data.InputStreamJsonLoader
+import com.kennycason.structural.data.JsonLoader
+import com.kennycason.structural.data.web.HttpJsonLoader
+import com.kennycason.structural.data.web.HttpMethod
+import com.kennycason.structural.data.web.Request
 import com.kennycason.structural.yaml.transform.ExpectsMapTransform
 import com.kennycason.structural.yaml.transform.IdentityValueTransform
 import com.kennycason.structural.yaml.transform.TypeValueTransform
@@ -94,10 +95,23 @@ class TestsParser {
         }
         return Request(
                 uri = requestNode.get("uri") as String,
-                method = if (requestNode.contains("method")) { requestNode.get("method") as String } else { "GET" },
+                method = parseHttpMethod(requestNode),
                 parameters = parseParameters(requestNode),
                 body = if (requestNode.contains("body")) { requestNode.get("body") as String } else { null },
                 headers = parseHeaders(requestNode))
+    }
+
+    private fun parseHttpMethod(requestNode: Map<String, Any>): HttpMethod {
+        if (!requestNode.contains("method")) { return HttpMethod.GET }
+
+        val method = requestNode.get("method") as String
+        return when (method) {
+            "GET" -> HttpMethod.GET
+            "POST" -> HttpMethod.POST
+            "PATCH" -> HttpMethod.PATCH
+            "DELETE" -> HttpMethod.DELETE
+            else -> throw InvalidInputException("Invalid Request method provided. Found: [$method]. Valid values are: ${HttpMethod.values()}")
+        }
     }
 
     private fun parseHeaders(requestNode: Map<String, Any>): List<Header> {

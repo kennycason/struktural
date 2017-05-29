@@ -1,10 +1,10 @@
-package com.kennycason.structural.yaml.data.web
+package com.kennycason.structural.data.web
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.yaml.Config
-import com.kennycason.structural.yaml.data.JsonLoader
+import com.kennycason.structural.data.JsonLoader
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Path
@@ -19,16 +19,16 @@ import java.net.URI
 /**
  * Created by kenny on 5/25/17.
  */
-class HttpJsonLoader(val config: Config, val request: Request) : JsonLoader {
+class HttpJsonLoader(val config: Config = Config(), val request: Request) : JsonLoader {
     override fun load(): JsonNode {
         val httpRequests = HttpRequests()
         val headers = request.headers.toTypedArray()
 
-        return when (request.method.toUpperCase()) {
-            "GET" -> httpRequests.get(buildUri(request), headers)
-            "POST" -> httpRequests.post(buildUri(request), headers, request.body)
-            "PATCH" -> httpRequests.patch(buildUri(request), headers, request.body)
-            "DELETE" -> httpRequests.delete(buildUri(request), headers)
+        return when (request.method) {
+            HttpMethod.GET -> httpRequests.get(buildUri(request), headers)
+            HttpMethod.POST -> httpRequests.post(buildUri(request), headers, request.body)
+            HttpMethod.PATCH -> httpRequests.patch(buildUri(request), headers, request.body)
+            HttpMethod.DELETE -> httpRequests.delete(buildUri(request), headers)
             else -> throw InvalidInputException("Invalid Http request method. Found [${request.method}]. Valid methods are GET, POST, PATCH, DELETE")
         }
     }

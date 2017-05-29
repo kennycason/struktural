@@ -1,4 +1,4 @@
-package com.kennycason.structural.yaml.data.web
+package com.kennycason.structural.data.web
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper

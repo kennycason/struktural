@@ -11,11 +11,11 @@ import com.kennycason.structural.ValidationResult
 import com.kennycason.structural.error.Error
 import com.kennycason.structural.exception.InvalidInputException
 import com.kennycason.structural.exception.StructuralException
-import com.kennycason.structural.yaml.data.FileJsonLoader
-import com.kennycason.structural.yaml.data.InputStreamJsonLoader
-import com.kennycason.structural.yaml.data.JsonLoader
-import com.kennycason.structural.yaml.data.web.HttpJsonLoader
-import com.kennycason.structural.yaml.data.web.Request
+import com.kennycason.structural.data.FileJsonLoader
+import com.kennycason.structural.data.InputStreamJsonLoader
+import com.kennycason.structural.data.JsonLoader
+import com.kennycason.structural.data.web.HttpJsonLoader
+import com.kennycason.structural.data.web.Request
 import org.apache.http.Header
 import org.apache.http.NameValuePair
 import org.apache.http.impl.io.AbstractMessageParser.parseHeaders
@@ -42,9 +42,24 @@ class YamlBackedValidator {
         }
     }
 
+    fun assert(yamlString: String) {
+        val validationResult = validate(yamlString)
+        if (!validationResult.valid) {
+            throw StructuralException(validationResult.errors.joinToString("\n"))
+        }
+    }
+
+    fun validate(yamlString: String): ValidationResult {
+        val testModel: Map<String, Any> =  yamlObjectMapper.readValue(yamlString, object: TypeReference<Map<String, Any>>() {})
+        return validate(testModel)
+    }
+
     fun validate(yamlInputStream: InputStream): ValidationResult {
-        val testModel: Map<String, Any> = yamlObjectMapper.readValue(yamlInputStream,
-                object: TypeReference<Map<String, Any>>() {})
+        val testModel: Map<String, Any> =  yamlObjectMapper.readValue(yamlInputStream, object: TypeReference<Map<String, Any>>() {})
+        return validate(testModel)
+    }
+
+    private fun validate(testModel: Map<String, Any>): ValidationResult {
         val config = parseConfig(testModel)
         val tests = testsParser.parse(testModel, config)
 
@@ -77,7 +92,7 @@ class YamlBackedValidator {
 
     private fun parseConfig(testModel: Map<String, Any>): Config {
         if (!testModel.contains("config")) {
-            return Config("", 0)
+            return Config()
         }
         val configMap = testModel.get("config") as Map<String, Any>
         return Config(

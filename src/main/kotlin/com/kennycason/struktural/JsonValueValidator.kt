@@ -54,7 +54,7 @@ class JsonValueValidator {
                 val value = field.second!!
 
                 if (!json.has(fieldName)) {
-                    errors.add(Error(Mode.STRUCTURE, "Field ${normalizeFieldPath(path, fieldName)} missing."))
+                    errors.add(Error(Mode.STRUCTURE, "Field [${normalizeFieldPath(path, fieldName)}] missing."))
                     return@forEach
                 }
 
@@ -73,12 +73,12 @@ class JsonValueValidator {
                 } else { // is nested object, recur
                     val jsonNode = json.get(fieldName)
                     if (!jsonNodeValueValidator.validate(jsonNode, value)) {
-                        errors.add(Error(Mode.VALUE, "Field ${normalizeFieldPath(path, fieldName)} value did not equal expected value: $value, actual value : $nestedJsonNode"))
+                        errors.add(Error(Mode.VALUE, "Field [${normalizeFieldPath(path, fieldName)}] value did not equal expected value: [$value], actual value : [$nestedJsonNode]"))
                     }
                 }
 
             } else {
-                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be Iterable for nested objects, or Any type to test equality. Found ${field::class}")
+                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be Iterable for nested objects, or Any type to test equality. Found [${field::class}]")
             }
         }
     }
@@ -87,14 +87,14 @@ class JsonValueValidator {
         val key = field.first
         val value = field.second
         if (key == null) {
-            throw InvalidInputException("First value for nested input must be a String. found null")
+            throw InvalidInputException("First value for nested input must be a String. Found null")
         }
         if (value == null) {
-            throw InvalidInputException("Second value for nested input must be a Iterable. found null")
+            throw InvalidInputException("Second value for nested input must be a Iterable. Found null")
         }
         // test structure of Pair<String, Any>
         if (key !is String) {
-            throw InvalidInputException("First value for nested input must be a String. found ${key::class.simpleName?.toLowerCase()}")
+            throw InvalidInputException("First value for nested input must be a String. Found [${key::class.simpleName?.toLowerCase()}]")
         }
         // the value can be any type since it's comparing equality, so don't check
     }

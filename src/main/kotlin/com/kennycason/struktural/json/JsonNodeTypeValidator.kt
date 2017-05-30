@@ -42,7 +42,8 @@ class JsonNodeTypeValidator {
             JsonNodeType.POJO,
             JsonNodeType.MISSING,
             JsonNodeType.NULL -> {
-                throw IllegalStateException("An illegal state occurred in Struktural. Unknown Json Node Type. Found $jsonNodeType")
+                return false
+                // throw IllegalStateException("An illegal state occurred in Struktural. Unknown Json Node Type [$jsonNodeType] found for field")
             }
         }
         return false

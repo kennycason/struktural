@@ -1,6 +1,7 @@
 package com.kennycason.struktural
 
 import com.kennycason.struktural.exception.StrukturalException
+import com.kennycason.struktural.json.Nullable
 import org.junit.Test
 //
 /**
@@ -135,5 +136,26 @@ class JsonTypeValidatorTest {
                         listOf(Pair("name", String::class),
                                Pair("coolness", Number::class)))))
     }
+
+
+    @Test
+    fun nullTest() {
+        val json = """
+        {
+            "foo": null
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("foo", Nullable(String::class))))
+
+        val json2 = """
+        {
+            "foo": "bar"
+        }
+        """
+        validator.assert(json2,
+                listOf(Pair("foo", Nullable(String::class))))
+    }
+
 
 }

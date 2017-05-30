@@ -7,6 +7,7 @@ import com.kennycason.struktural.error.Error
 import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
 import com.kennycason.struktural.json.JsonNodeTypeValidator
+import com.kennycason.struktural.json.Nullable
 import kotlin.reflect.KClass
 
 /**
@@ -64,6 +65,16 @@ class JsonTypeValidator {
                         errors.add(Error(Mode.TYPE, "Field [${normalizeFieldPath(path, fieldName)}] is not of type [${value.simpleName!!.toLowerCase()}]. Found [${jsonNodeType.toString().toLowerCase()}]"))
                     }
 
+                } else  if (value is Nullable) {
+                    val jsonNode = json.get(fieldName)
+                    val jsonNodeType = jsonNode.nodeType!!
+                    // only validate if not null since null is allowed.
+                    if (jsonNodeType != JsonNodeType.NULL) {
+                        if (!jsonNodeTypeValidator.validate(jsonNode, value.clazz)) {
+                            errors.add(Error(Mode.TYPE, "Field [${normalizeFieldPath(path, fieldName)}] is not of type [${value.clazz.simpleName!!.toLowerCase()}] or null. Found [${jsonNodeType.toString().toLowerCase()}]"))
+                        }
+                    }
+
                 } else if (value is Iterable<*>) {
                     val nestedFields = value
                     val nestedJsonNode = json.get(fieldName)
@@ -98,8 +109,11 @@ class JsonTypeValidator {
         if (key !is String) {
             throw InvalidInputException("First value for nested input must be a String. Found [${key::class.simpleName?.toLowerCase()}]")
         }
-        if (value !is Iterable<*> && value !is KClass<*>) {
-            throw InvalidInputException("Input must either be a Pair<String, *>, where * can be a KClass type assert or an Iterable for nested objects. " +
+        if (!(value is Iterable<*>
+                || value is KClass<*>
+                || value is Nullable)) {
+            throw InvalidInputException("Input must either be a Pair<String, VALUE>, " +
+                    "where VALUE can be a KClass for type assertion, Iterable for pairs of nested objects, or a Nullable value, " +
                     "Found Pair<${key::class.simpleName?.toLowerCase()}, ${value::class.simpleName?.toLowerCase()}>")
         }
     }

@@ -36,7 +36,7 @@ Struktural is available on Maven Central. (Or will be very soon)
 <dependency>
     <groupId>com.kennycason</groupId>
     <artifactId>struktural</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -139,11 +139,21 @@ val json = """
         }
     ]
 }
+
 """
 Struktural.assertTypes(json,
         listOf(Pair("languages",
                 listOf(Pair("name", String::class),
                        Pair("coolness", Number::class)))))
+
+// nullable values
+val json = """
+{
+    "foo": null
+}
+"""
+Struktural.assertTypes(json,
+        listOf(Pair("foo", Nullable(String::class))))
 ```
 
 #### Assert Field Values

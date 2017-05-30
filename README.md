@@ -36,7 +36,7 @@ Struktural is available on Maven Central. (Or will be very soon)
 <dependency>
     <groupId>com.kennycason</groupId>
     <artifactId>struktural</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 

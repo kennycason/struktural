@@ -61,6 +61,10 @@ class JsonTypeValidator {
                 if (value is KClass<*>) {
                     val jsonNode = json.get(fieldName)
                     val jsonNodeType = jsonNode.nodeType!!
+                    if (jsonNodeType == JsonNodeType.NULL) {
+                        errors.add(Error(Mode.TYPE, "Field [${normalizeFieldPath(path, fieldName)}] is null, expected [${value.simpleName!!.toLowerCase()}]."))
+                        return@forEach
+                    }
                     if (!jsonNodeTypeValidator.validate(jsonNode, value)) {
                         errors.add(Error(Mode.TYPE, "Field [${normalizeFieldPath(path, fieldName)}] is not of type [${value.simpleName!!.toLowerCase()}]. Found [${jsonNodeType.toString().toLowerCase()}]"))
                     }

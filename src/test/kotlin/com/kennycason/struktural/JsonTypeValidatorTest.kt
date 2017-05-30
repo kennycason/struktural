@@ -137,7 +137,6 @@ class JsonTypeValidatorTest {
                                Pair("coolness", Number::class)))))
     }
 
-
     @Test
     fun nullTest() {
         val json = """
@@ -155,6 +154,17 @@ class JsonTypeValidatorTest {
         """
         validator.assert(json2,
                 listOf(Pair("foo", Nullable(String::class))))
+    }
+
+    @Test(expected = StrukturalException::class)
+    fun unexpectedNullValue() {
+        val json = """
+        {
+            "foo": null
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("foo", String::class)))
     }
 
 

@@ -1,0 +1,14 @@
+---
+tests:
+  -
+    mode: structure
+    data:
+      resource: /com/kennycason/struktural/json/person_sample_response.json
+
+    expects:
+      - name
+      - age
+      - job:
+          - id
+          - title
+

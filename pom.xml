@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.kennycason</groupId>
-    <artifactId>structural</artifactId>
-    <version>1.0.1</version>
-    <name>Structural</name>
-    <description>Structural - API Testing Made Easy - Kotlin</description>
-    <url>https://github.com/kennycason/structural</url>
+    <artifactId>struktural</artifactId>
+    <version>1.0.0</version>
+    <name>Struktural</name>
+    <description>Struktural - API Testing Made Easy - Kotlin</description>
+    <url>https://github.com/kennycason/struktural</url>
 
     <properties>
         <kotlin.version>1.1.2</kotlin.version>
@@ -34,19 +34,19 @@
             <roles>
                 <role>Developer</role>
             </roles>
-            <url>https://github.com/kennycason/structural</url>
+            <url>https://github.com/kennycason/struktural</url>
         </developer>
     </developers>
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/kennycason/structural/issues</url>
+        <url>https://github.com/kennycason/struktural/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:kennycason/structural.git</connection>
-        <developerConnection>scm:git:git@github.com:kennycason/structural.git</developerConnection>
-        <url>https://github.com/kennycason/structural</url>
+        <connection>scm:git:git@github.com:kennycason/struktural.git</connection>
+        <developerConnection>scm:git:git@github.com:kennycason/struktural.git</developerConnection>
+        <url>https://github.com/kennycason/struktural</url>
     </scm>
 
     <dependencies>

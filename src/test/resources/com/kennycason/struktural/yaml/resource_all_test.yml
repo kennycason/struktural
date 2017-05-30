@@ -1,0 +1,37 @@
+---
+tests:
+#  -
+#    mode: structure
+#    data:
+#      resource: /com/kennycason/struktural/json/person_sample_response.json
+#
+#    expects:
+#      - name
+#      - age
+#      - job:
+#          id
+#          title
+
+  -
+    mode: type
+    data:
+      resource: /com/kennycason/struktural/json/person_sample_response.json
+
+    expects:
+      - name: string
+      - age: int
+      - job:
+          id: int
+          title: string
+
+  -
+    mode: value
+    data:
+      resource: /com/kennycason/struktural/json/person_sample_response.json
+
+    expects:
+      - name: Kenny
+      - age: 30
+      - job:
+          id: 123456
+          title: Software Engineer

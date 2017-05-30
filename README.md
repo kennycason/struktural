@@ -1,9 +1,9 @@
-# Structural
+# Struktural
 
 ## What
-Structural is a suite of tools written in Kotlin designed to make testing of APIs easier in Java/Kotlin.
+Struktural is a suite of tools written in Kotlin designed to make testing of APIs easier in Java/Kotlin.
 
-Structural is designed to give flexible control over the level of desired testing.
+Struktural is designed to give flexible control over the level of desired testing.
 
 | Features               | Description                                                      |
 | ---------------------- | ---------------------------------------------------------------- |
@@ -11,7 +11,7 @@ Structural is designed to give flexible control over the level of desired testin
 | Assert Json Types      | A middleweight test to assert presence of fields and their types |
 | Assert Json Values     | A heavyweight test to assert presence of fields and their values |
 
-Structural provides two interfaces.
+Struktural provides two interfaces.
 1. A native Kotlin interface for running tests. (Interfaces natively with Java)
 2. A YAML driven test format. Place tests in a YAML format and don't type any Java/Kotlin at all!
     - There are also plans to build a Maven plugin for this. Initially there will be a helper class to load and run all the YAML tests.
@@ -30,13 +30,13 @@ This is an attempt to make writing integration tests more fun and remove some of
 I think this is especially important as the world continues to adopt Service Oriented Architectures.
 
 ## Where
-Structural is available on Maven Central. (Or will be very soon)
+Struktural is available on Maven Central. (Or will be very soon)
 
 ```xml
 <dependency>
     <groupId>com.kennycason</groupId>
-    <artifactId>structural</artifactId>
-    <version>1.0.1</version>
+    <artifactId>struktural</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ val json = """
     }
 }
 """
-Structural.assertStructure(json,
+Struktural.assertStructure(json,
         listOf("name",
                 "age",
                 Pair("job",
@@ -78,7 +78,7 @@ val json = """
     ]
 }
 """
-Structural.assertStructure(json,
+Struktural.assertStructure(json,
         listOf(Pair("languages",
                 listOf("name",
                        "coolness"))))
@@ -102,7 +102,7 @@ val json = """
 }
 """
 // strict number types
-Structural.assertTypes(json,
+Struktural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Int::class),
                 Pair("shoe_size", Float::class),
@@ -114,7 +114,7 @@ Structural.assertTypes(json,
                                    Pair("title", String::class)))))
 
 // relaxed number types
-Structural.assertTypes(json,
+Struktural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Number::class),
                 Pair("shoe_size", Number::class),
@@ -140,7 +140,7 @@ val json = """
     ]
 }
 """
-Structural.assertTypes(json,
+Struktural.assertTypes(json,
         listOf(Pair("languages",
                 listOf(Pair("name", String::class),
                        Pair("coolness", Number::class)))))
@@ -161,7 +161,7 @@ val json = """
     }
 }
 """
-Structural.assertValues(json,
+Struktural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("age", 64),
                 Pair("shoe_size", 10.5),
@@ -171,7 +171,7 @@ Structural.assertValues(json,
                                    Pair("title", "Software Engineer")))))
 
 // only match partial
-Structural.assertValues(json,
+Struktural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("favorite_number", 2.718281828459045235)))
 
@@ -181,7 +181,7 @@ val json = """
     "numbers": [1,2,3,4,5,6]
 }
 """
-Structural.assertValues(json,
+Struktural.assertValues(json,
                 listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
 
 
@@ -202,7 +202,7 @@ val json = """
     ]
 }
 """
-Structural.assertValues(json,
+Struktural.assertValues(json,
         listOf(Pair("people",
                 listOf(Pair("favorite_language", "kotlin")))))
 ```
@@ -334,7 +334,7 @@ tests:
 
 Assert tests in YAML file are valid
 ```kotlin
-Structural.assertYaml(javaClass.getResourceAsStream("/path/to/resource/my_test.yml"))
+Struktural.assertYaml(javaClass.getResourceAsStream("/path/to/resource/my_test.yml"))
 ```
 
 
@@ -346,7 +346,7 @@ tests:
   -
     mode: type
     data:
-      resource: /com/kennycason/structural/json/person_sample_response.json
+      resource: /com/kennycason/struktural/json/person_sample_response.json
 
     expects:
       - name: string
@@ -356,10 +356,10 @@ tests:
           title: string
 """
 
-Structural.assertYaml(yaml)
+Struktural.assertYaml(yaml)
 ```
 
-### Kotlin + Structural + Spek
+### Kotlin + Struktural + Spek
 
 A small example using JetBrain's [Spek Framework](http://spekframework.org/)
 
@@ -375,7 +375,7 @@ class LangleyTests : Spek( {
                 .load()
 
         it("Response structure & types") {
-            Structural.assertTypes(json,
+            Struktural.assertTypes(json,
                     listOf(Pair("items", listOf(
                             Pair("id", String::class),
                             Pair("language", listOf(

@@ -38,9 +38,7 @@ class HttpJsonLoader(val config: Config = Config(), val request: Request) : Json
         else {
             "?" + request.parameters.joinToString("&")
         }
-        val uri = URI(buildBaseURI() + request.uri + parameters)
-        println("Making request to uri: $uri")
-        return uri
+        return URI(buildBaseURI() + request.uri + parameters)
     }
 
     private fun buildBaseURI(): String {

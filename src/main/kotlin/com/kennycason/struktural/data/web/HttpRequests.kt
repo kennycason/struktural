@@ -25,6 +25,7 @@ class HttpRequests() {
         val request = HttpGet(uri)
         request.setHeaders(headers)
 
+        println("GET $uri")
         return objectMapper.readTree(
                 HttpClientBuilder.create()
                         .build()
@@ -41,6 +42,7 @@ class HttpRequests() {
             request.setEntity(StringEntity(data))
         }
 
+        println("POST $uri")
         return objectMapper.readTree(
                 HttpClientBuilder.create()
                         .build()
@@ -57,6 +59,7 @@ class HttpRequests() {
             request.setEntity(StringEntity(data))
         }
 
+        println("PATCH $uri")
         return objectMapper.readTree(
                 HttpClientBuilder.create()
                         .build()
@@ -69,6 +72,7 @@ class HttpRequests() {
         val request = HttpDelete(uri)
         request.setHeaders(headers)
 
+        println("DELETE $uri")
         return objectMapper.readTree(
                 HttpClientBuilder.create()
                         .build()

@@ -367,14 +367,14 @@ A small example using JetBrain's [Spek Framework](http://spekframework.org/)
 class LangleyTests : Spek( {
 
     describe("Language Classification API Tests") {
-        val json = HttpJsonLoader(
+
+        it("Response structure & types") {
+            val json = HttpJsonLoader(
                 request = Request(uri = "http://api.service.com/language/detection",
                         method = HttpMethod.POST,
                         body = """{"items":[{"id":"1","text":"I am a happy person"}]}""",
                         headers = listOf<Header>(BasicHeader("Content-Type", "application/json"))))
                 .load()
-
-        it("Response structure & types") {
             Struktural.assertTypes(json,
                     listOf(Pair("items", listOf(
                             Pair("id", String::class),

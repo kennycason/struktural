@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.kennycason.struktural.Struktural
 import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
+import org.hamcrest.Matcher
 import kotlin.reflect.KClass
 
 /**
@@ -13,6 +14,10 @@ import kotlin.reflect.KClass
 class JsonNodeValueValidator {
 
     fun validate(jsonNode: JsonNode, value: Any): Boolean {
+        if (value is Matcher<*>) {
+            return validateMatcher(jsonNode, value)
+        }
+
         val jsonNodeType = jsonNode.nodeType!!
         when (jsonNodeType) {
             JsonNodeType.ARRAY -> {
@@ -27,7 +32,7 @@ class JsonNodeValueValidator {
             }
             JsonNodeType.BOOLEAN -> {
                 if (value is Boolean) {
-                    return jsonNode.asBoolean() == value
+                    return value == jsonNode.asBoolean()
                 }
             }
             JsonNodeType.NUMBER -> {
@@ -51,7 +56,7 @@ class JsonNodeValueValidator {
                 throw StrukturalException("Can not test equality for Json Objects")
             }
             JsonNodeType.STRING,
-            JsonNodeType.BINARY-> {
+            JsonNodeType.BINARY -> {
                 if (value is String) {
                     return jsonNode.asText() == value
                 }
@@ -66,4 +71,25 @@ class JsonNodeValueValidator {
         return false
     }
 
+    private fun validateMatcher(jsonNode: JsonNode, matcher: Matcher<*>): Boolean {
+        return matcher.matches(extractValue(jsonNode))
+    }
+
+    private fun extractValue(jsonNode: JsonNode): Any? =
+            when (jsonNode.nodeType!!) {
+                JsonNodeType.ARRAY -> throw StrukturalException("Can not use matchers to test equality for Json Arrays")
+                JsonNodeType.BOOLEAN -> jsonNode.asBoolean()
+                JsonNodeType.NUMBER ->
+                    if (jsonNode.isInt) { jsonNode.intValue() }
+                    else if (jsonNode.isLong) { jsonNode.longValue() }
+                    else if (jsonNode.isFloat) { jsonNode.floatValue() }
+                    else if (jsonNode.isDouble) { jsonNode.doubleValue() }
+                    else { throw StrukturalException("Failed to parse Json Number as an Int, Short, Float, or Double") }
+                JsonNodeType.OBJECT -> throw StrukturalException("Can not use matchers to test equality for Json Objects")
+                JsonNodeType.STRING,
+                JsonNodeType.BINARY -> jsonNode.asText()
+                JsonNodeType.POJO,
+                JsonNodeType.MISSING,
+                JsonNodeType.NULL -> null
+            }
 }

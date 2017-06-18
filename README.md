@@ -36,7 +36,7 @@ Struktural is available on Maven Central. (Or will be very soon)
 <dependency>
     <groupId>com.kennycason</groupId>
     <artifactId>struktural</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -45,6 +45,7 @@ Struktural is available on Maven Central. (Or will be very soon)
 ### Kotlin API
 
 #### Assert Field Structure
+
 ```kotlin
 val json = """
 {
@@ -62,8 +63,11 @@ Struktural.assertStructure(json,
                 Pair("job",
                     listOf("id",
                            "title"))))
+```
 
-// nested array of objects
+Nested array of objects
+
+```kotlin
 val json = """
 {
     "languages": [
@@ -101,7 +105,11 @@ val json = """
     }
 }
 """
-// strict number types
+```
+
+Strict number types
+
+```kotlin
 Struktural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Int::class),
@@ -112,8 +120,11 @@ Struktural.assertTypes(json,
                 Pair("job", Object::class),
                 Pair("job", listOf(Pair("id", Int::class),
                                    Pair("title", String::class)))))
+```
 
-// relaxed number types
+Relaxed number types
+
+```kotlin
 Struktural.assertTypes(json,
          listOf(Pair("name", String::class),
                 Pair("age", Number::class),
@@ -125,7 +136,11 @@ Struktural.assertTypes(json,
                 Pair("job", listOf(Pair("id", Number::class),
                            Pair("title", String::class)))))
 
-// nested array of objects
+```
+
+Nested array of objects
+
+```kotlin
 val json = """
 {
     "languages": [
@@ -146,7 +161,11 @@ Struktural.assertTypes(json,
                 listOf(Pair("name", String::class),
                        Pair("coolness", Number::class)))))
 
-// nullable values
+```
+
+Nullable values
+
+```kotlin
 val json = """
 {
     "foo": null
@@ -157,6 +176,7 @@ Struktural.assertTypes(json,
 ```
 
 #### Assert Field Values
+
 ```kotlin
 val json = """
 {
@@ -180,12 +200,19 @@ Struktural.assertValues(json,
                 Pair("job", listOf(Pair("id", 123456),
                                    Pair("title", "Software Engineer")))))
 
-// only match partial
+```
+
+Only match partial
+
+```kotlin
 Struktural.assertValues(json,
          listOf(Pair("name", "kenny"),
                 Pair("favorite_number", 2.718281828459045235)))
+```
 
-// simple array example
+Simple array example
+
+```kotlin
 val json = """
 {
     "numbers": [1,2,3,4,5,6]
@@ -194,8 +221,11 @@ val json = """
 Struktural.assertValues(json,
                 listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
 
+```
 
-// nested array example
+Nested array example
+
+```kotlin
 val json = """
 {
     "people": [
@@ -215,6 +245,35 @@ val json = """
 Struktural.assertValues(json,
         listOf(Pair("people",
                 listOf(Pair("favorite_language", "kotlin")))))
+
+
+```
+
+Using Hamcrest matchers
+
+```kotlin
+val json = """
+{
+    "people": [
+        {
+            "name": "kenny",
+            "favorite_language": "Kotlin",
+            "age": 64
+        },
+        {
+            "name": "martin",
+            "favorite_language": "Kotlin",
+            "age": 92
+        }
+    ]
+}
+"""
+validator.assert(json,
+        listOf(Pair("people",
+                listOf(
+                        Pair("name", Matchers.notNullValue()),
+                        Pair("favorite_language", Matchers.equalToIgnoringCase("kotlin")),
+                        Pair("age", Matchers.greaterThan(50))))))
 ```
 
 

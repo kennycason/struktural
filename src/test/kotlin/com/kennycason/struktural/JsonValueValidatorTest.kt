@@ -1,6 +1,7 @@
 package com.kennycason.struktural
 
 import com.kennycason.struktural.exception.StrukturalException
+import org.hamcrest.Matchers
 import org.junit.Test
 
 /**
@@ -146,4 +147,31 @@ class JsonValueValidatorTest {
                 listOf(Pair("people",
                         listOf(Pair("age", 64)))))
     }
+
+    @Test
+    fun usingMatchers() {
+        val json = """
+        {
+            "people": [
+                {
+                    "name": "kenny",
+                    "favorite_language": "Kotlin",
+                    "age": 64
+                },
+                {
+                    "name": "martin",
+                    "favorite_language": "Kotlin",
+                    "age": 92
+                }
+            ]
+        }
+        """
+        validator.assert(json,
+                listOf(Pair("people",
+                        listOf(
+                                Pair("name", Matchers.notNullValue()),
+                                Pair("favorite_language", Matchers.equalToIgnoringCase("kotlin")),
+                                Pair("age", Matchers.greaterThan(50))))))
+    }
+
 }

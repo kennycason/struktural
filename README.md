@@ -5,11 +5,11 @@ Struktural is a suite of tools written in Kotlin designed to make testing of API
 
 Struktural is designed to give flexible control over the level of desired testing.
 
-| Features               | Description                                                      |
-| ---------------------- | ---------------------------------------------------------------- |
-| Assert Json Structure  | A lightweight test to assert presence of fields                  |
-| Assert Json Types      | A middleweight test to assert presence of fields and their types |
-| Assert Json Values     | A heavyweight test to assert presence of fields and their values |
+| Features               | Description                                                       |
+| ---------------------- | ----------------------------------------------------------------- |
+| Assert Json Structure  | A lightweight test to assert presence of fields.                  |
+| Assert Json Types      | A middleweight test to assert presence of fields and their types. |
+| Assert Json Values     | A heavyweight test to assert presence of fields and their values. <br/>Supports exact values as well as matchers via Hamcrest. |
 
 Struktural provides two interfaces.
 1. A native Kotlin interface for running tests. (Interfaces natively with Java)

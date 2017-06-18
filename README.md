@@ -433,7 +433,7 @@ Struktural.assertYaml(yaml)
 A small example using JetBrain's [Spek Framework](http://spekframework.org/)
 
 ```kotlin
-class LangleyTests : Spek( {
+class LanguageClassifierApiTests : Spek( {
 
     describe("Language Classification API Tests") {
 

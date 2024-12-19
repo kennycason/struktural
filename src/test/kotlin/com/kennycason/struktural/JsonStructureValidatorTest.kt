@@ -34,7 +34,8 @@ class JsonStructureValidatorTest {
         """
         validator.assert(json,
                 listOf("foo",
-                    Pair("nested", listOf("foo2"))))
+                    "nested" to listOf("foo2")
+                ))
     }
 
     @Test
@@ -52,9 +53,9 @@ class JsonStructureValidatorTest {
         validator.assert(json,
                 listOf("name",
                         "age",
-                        Pair("job",
-                            listOf("id",
-                                   "title"))))
+                    "job" to listOf("id",
+                        "title")
+                ))
     }
 
     @Test
@@ -80,7 +81,8 @@ class JsonStructureValidatorTest {
         """
         validator.assert(json,
                 listOf("id",
-                        Pair("numbers", listOf("does_not_exist"))))
+                    "numbers" to listOf("does_not_exist")
+                ))
     }
 
     @Test
@@ -104,9 +106,10 @@ class JsonStructureValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("languages",
-                        listOf("name",
-                               "coolness"))))
+                listOf(
+                    "languages" to listOf("name",
+                        "coolness")
+                ))
     }
 
 }

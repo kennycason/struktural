@@ -2,11 +2,8 @@ package com.kennycason.struktural.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.JsonNodeType
-import com.kennycason.struktural.Struktural
-import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
 import org.hamcrest.Matcher
-import kotlin.reflect.KClass
 
 /**
  * Created by kenny on 5/24/17.

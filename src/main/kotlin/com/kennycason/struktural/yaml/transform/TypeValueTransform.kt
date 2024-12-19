@@ -18,5 +18,4 @@ class TypeValueTransform : ValueTransform {
         "object" -> Any::class
         else -> throw InvalidInputException("Invalid value for type. Must be one of string,int,long,float,double,number,bool,object")
     }
-
 }

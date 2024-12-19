@@ -1,6 +1,5 @@
 package com.kennycason.struktural.yaml.transform
 
-import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.Mode
 
 /**
@@ -21,7 +20,7 @@ class ExpectsMapTransform(mode: Mode) {
         from.forEach { item ->
             if (item is String) {
                 transformed.add(item)
-            } else if (item is  Map<*, *>) {
+            } else if (item is Map<*, *>) {
                 item.entries.forEach { entry ->
                     transformed.add(Pair(entry.key, transformToAny(entry.value as Iterable<Any>)))
                 }
@@ -55,5 +54,4 @@ class ExpectsMapTransform(mode: Mode) {
         Mode.TYPE -> TypeValueTransform()
         else -> IdentityValueTransform()
     }
-
 }

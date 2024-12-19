@@ -17,17 +17,17 @@ class JsonValueValidatorTest {
 
     @Test(expected = StrukturalException::class)
     fun emptyJson() {
-        validator.assert("{}", listOf(Pair("foo", 23)))
+        validator.assert("{}", listOf("foo" to 23))
     }
 
     @Test
     fun singleField() {
-        validator.assert("""{"foo": "bar"}""", listOf(Pair("foo", "bar")))
+        validator.assert("""{"foo": "bar"}""", listOf("foo" to "bar"))
     }
 
     @Test(expected = StrukturalException::class)
     fun singleFieldInvalidValue() {
-        validator.assert("""{"foo": "bar"}""", listOf(Pair("foo", "rab")))
+        validator.assert("""{"foo": "bar"}""", listOf("foo" to "rab"))
     }
 
     @Test
@@ -39,9 +39,10 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                 listOf(Pair("foo", "bar"),
-                        Pair("nested",
-                               listOf(Pair("foo2", "bar2")))))
+                 listOf(
+                     "foo" to "bar",
+                     "nested" to listOf("foo2" to "bar2")
+                 ))
     }
 
     @Test
@@ -60,18 +61,24 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                 listOf(Pair("name", "kenny"),
-                        Pair("age", 64),
-                        Pair("shoe_size", 10.5),
-                        Pair("favorite_number", 2.718281828459045235),
-                        Pair("long_number", 1223235345342348),
-                        Pair("job", listOf(Pair("id", 123456),
-                                           Pair("title", "Software Engineer")))))
+                 listOf(
+                     "name" to "kenny",
+                     "age" to 64,
+                     "shoe_size" to 10.5,
+                     "favorite_number" to 2.718281828459045235,
+                     "long_number" to 1223235345342348,
+                     "job" to listOf(
+                         "id" to 123456,
+                         "title" to "Software Engineer"
+                     )
+                 ))
 
         // only match partial
         validator.assert(json,
-                 listOf(Pair("name", "kenny"),
-                        Pair("favorite_number", 2.718281828459045235)))
+                 listOf(
+                     "name" to "kenny",
+                     "favorite_number" to 2.718281828459045235
+                 ))
     }
 
     @Test
@@ -82,7 +89,7 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
+                listOf("numbers" to arrayOf(1, 2, 3, 4, 5, 6)))
     }
 
     @Test(expected = StrukturalException::class)
@@ -93,7 +100,7 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6, 7))))
+                listOf("numbers" to arrayOf(1, 2, 3, 4, 5, 6, 7)))
     }
 
     @Test
@@ -120,8 +127,7 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("people",
-                        listOf(Pair("favorite_language", "kotlin")))))
+                listOf("people" to listOf("favorite_language" to "kotlin")))
     }
 
 
@@ -144,8 +150,7 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("people",
-                        listOf(Pair("age", 64)))))
+                listOf("people" to listOf("age" to 64)))
     }
 
     @Test
@@ -167,11 +172,13 @@ class JsonValueValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("people",
-                        listOf(
-                                Pair("name", Matchers.notNullValue()),
-                                Pair("favorite_language", Matchers.equalToIgnoringCase("kotlin")),
-                                Pair("age", Matchers.greaterThan(50))))))
+                listOf(
+                    "people" to listOf(
+                        "name" to Matchers.notNullValue(),
+                        "favorite_language" to Matchers.equalToIgnoringCase("kotlin"),
+                        "age" to Matchers.greaterThan(50)
+                    )
+                ))
     }
 
 }

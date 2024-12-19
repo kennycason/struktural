@@ -2,19 +2,24 @@ package com.kennycason.struktural
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.JsonNodeType
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.kennycason.struktural.error.Error
 import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
 import com.kennycason.struktural.json.JsonNodeValueValidator
-import kotlin.reflect.KClass
 
 /**
  * Test fields not missing and field value.
  *
  */
 class JsonValueValidator {
-    private val objectMapper = ObjectMapper()
+
+    private var objectMapper: ObjectMapper = ObjectMapper()
+
+    fun setObjectMapper(objectMapper: ObjectMapper) {
+        this.objectMapper = ObjectMapper(YAMLFactory())
+    }
+
     private val jsonNodeValueValidator = JsonNodeValueValidator()
 
     fun assert(jsonString: String, fieldTypes: Iterable<Pair<String, Any>>) = assert(objectMapper.readTree(jsonString), fieldTypes)
@@ -25,8 +30,7 @@ class JsonValueValidator {
         throw StrukturalException(result.errors.joinToString("\n"))
     }
 
-    fun validate(jsonString: String,
-                fieldTypes: Iterable<Pair<String, Any>>) = assert(objectMapper.readTree(jsonString), fieldTypes)
+    fun validate(jsonString: String, fieldTypes: Iterable<Pair<String, Any>>) = assert(objectMapper.readTree(jsonString), fieldTypes)
 
     fun validate(json: JsonNode, fieldTypes: Iterable<Pair<String, Any>>): ValidationResult {
         // keep track of all errors
@@ -38,13 +42,15 @@ class JsonValueValidator {
         return ValidationResult(errors.isEmpty(), errors)
     }
 
-    private fun  walkFields(json: JsonNode,
-                            fields: Iterable<Any>,
-                            path: String,
-                            errors: MutableList<Error>) {
+    private fun  walkFields(
+        json: JsonNode,
+        fields: Iterable<Any>,
+        path: String,
+        errors: MutableList<Error>
+    ) {
         fields.forEach { field ->
             // could also be a Pair<String, Iterable<*>> which is a nested field
-            // could be a a Pair<String, Any> which is a value to test equality
+            // could be a Pair<String, Any> which is a value to test equality
             if (field is Pair<*, *>) {
                 // nest object, validate and recur
                 validateNestedField(field)
@@ -64,21 +70,23 @@ class JsonValueValidator {
                         // it is rather odd to assert values across all items in an array of objects,
                         // but perhaps useful for asserting a subset of the fields
                         nestedJsonNode.forEach { node ->
-                            walkFields(node, value.requireNoNulls(), path + '/' + fieldName, errors)
+                            walkFields(node, value.requireNoNulls(), "$path/$fieldName", errors)
                         }
                     } else {
-                        walkFields(nestedJsonNode, value.requireNoNulls(), path + '/' + fieldName, errors)
+                        walkFields(nestedJsonNode, value.requireNoNulls(), "$path/$fieldName", errors)
                     }
 
                 } else { // is nested object, recur
                     val jsonNode = json.get(fieldName)
                     if (!jsonNodeValueValidator.validate(jsonNode, value)) {
-                        errors.add(Error(Mode.VALUE, "Field [${normalizeFieldPath(path, fieldName)}] value did not equal expected value: [$value], actual value : [$nestedJsonNode]"))
+                        errors.add(Error(Mode.VALUE, "Field [${normalizeFieldPath(path, fieldName)}] value did not equal expected value:" +
+                            " [$value], actual value : [$nestedJsonNode]"))
                     }
                 }
 
             } else {
-                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be Iterable for nested objects, or Any type to test equality. Found [${field::class}]")
+                throw InvalidInputException("Input must either be a Pair<String, *>, where * can be Iterable for nested objects," +
+                    " or Any type to test equality. Found [${field::class}]")
             }
         }
     }
@@ -94,11 +102,11 @@ class JsonValueValidator {
         }
         // test structure of Pair<String, Any>
         if (key !is String) {
-            throw InvalidInputException("First value for nested input must be a String. Found [${key::class.simpleName?.toLowerCase()}]")
+            throw InvalidInputException("First value for nested input must be a String. Found [${key::class.simpleName?.lowercase()}]")
         }
         // the value can be any type since it's comparing equality, so don't check
     }
 
-    private fun normalizeFieldPath(path: String, field: String) = (path + '/' + field).replace(Regex("^/"), "")
+    private fun normalizeFieldPath(path: String, field: String) = ("$path/$field").replace(Regex("^/"), "")
 
 }

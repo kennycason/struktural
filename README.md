@@ -36,7 +36,7 @@ Struktural is available on Maven Central. (Or will be very soon)
 <dependency>
     <groupId>com.kennycason</groupId>
     <artifactId>struktural</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -60,9 +60,7 @@ val json = """
 Struktural.assertStructure(json,
         listOf("name",
                 "age",
-                Pair("job",
-                    listOf("id",
-                           "title"))))
+                "job" to listOf("id",  "title")))
 ```
 
 Nested array of objects
@@ -83,9 +81,7 @@ val json = """
 }
 """
 Struktural.assertStructure(json,
-        listOf(Pair("languages",
-                listOf("name",
-                       "coolness"))))
+        listOf("languages" to listOf("name", "coolness")))
 ```
 
 
@@ -110,32 +106,38 @@ val json = """
 Strict number types
 
 ```kotlin
-Struktural.assertTypes(json,
-         listOf(Pair("name", String::class),
-                Pair("age", Int::class),
-                Pair("shoe_size", Float::class),
-                Pair("favorite_number", Double::class),
-                Pair("long_number", Long::class),
-                Pair("random", Array<Any>::class),
-                Pair("job", Object::class),
-                Pair("job", listOf(Pair("id", Int::class),
-                                   Pair("title", String::class)))))
+validator.assert(json,
+     listOf(
+         "name" to String::class,
+         "age" to Int::class,
+         "shoe_size" to Float::class,
+         "favorite_number" to Double::class,
+         "long_number" to Long::class,
+         "random" to Array<Any>::class,
+         "job" to Object::class,
+         "job" to listOf(
+             "id" to Int::class,
+             "title" to String::class
+         )
+     ))
 ```
 
 Relaxed number types
-
 ```kotlin
-Struktural.assertTypes(json,
-         listOf(Pair("name", String::class),
-                Pair("age", Number::class),
-                Pair("shoe_size", Number::class),
-                Pair("favorite_number", Number::class),
-                Pair("long_number", Number::class),
-                Pair("random", Array<Any>::class),
-                Pair("job", Object::class),
-                Pair("job", listOf(Pair("id", Number::class),
-                           Pair("title", String::class)))))
-
+validator.assert(json,
+     listOf(
+         "name" to String::class,
+         "age" to Number::class,
+         "shoe_size" to Number::class,
+         "favorite_number" to Number::class,
+         "long_number" to Number::class,
+         "random" to Array<Any>::class,
+         "job" to Object::class,
+         "job" to listOf(
+             "id" to Number::class,
+             "title" to String::class
+         )
+     ))
 ```
 
 Nested array of objects
@@ -156,11 +158,13 @@ val json = """
 }
 
 """
-Struktural.assertTypes(json,
-        listOf(Pair("languages",
-                listOf(Pair("name", String::class),
-                       Pair("coolness", Number::class)))))
-
+validator.assert(json,
+    listOf(
+        "languages" to listOf(
+            "name" to String::class,
+            "coolness" to Number::class
+        )
+    ))
 ```
 
 Nullable values
@@ -172,7 +176,7 @@ val json = """
 }
 """
 Struktural.assertTypes(json,
-        listOf(Pair("foo", Nullable(String::class))))
+    listOf("foo" to Nullable(String::class)))
 ```
 
 #### Assert Field Values
@@ -191,23 +195,26 @@ val json = """
     }
 }
 """
-Struktural.assertValues(json,
-         listOf(Pair("name", "kenny"),
-                Pair("age", 64),
-                Pair("shoe_size", 10.5),
-                Pair("favorite_number", 2.718281828459045235),
-                Pair("long_number", 1223235345342348),
-                Pair("job", listOf(Pair("id", 123456),
-                                   Pair("title", "Software Engineer")))))
-
+validator.assert(json,
+    listOf(
+        "name" to "kenny",
+        "age" to 64,
+        "shoe_size" to 10.5,
+        "favorite_number" to 2.718281828459045235,
+        "long_number" to 1223235345342348,
+        "job" to listOf(
+            "id" to 123456,
+            "title" to "Software Engineer"
+        )
+    ))
 ```
 
 Only match partial
 
 ```kotlin
 Struktural.assertValues(json,
-         listOf(Pair("name", "kenny"),
-                Pair("favorite_number", 2.718281828459045235)))
+         listOf("name" to "kenny",
+                "favorite_number" to 2.718281828459045235))
 ```
 
 Simple array example
@@ -219,7 +226,7 @@ val json = """
 }
 """
 Struktural.assertValues(json,
-                listOf(Pair("numbers", arrayOf(1, 2, 3, 4, 5, 6))))
+                listOf("numbers" to arrayOf(1, 2, 3, 4, 5, 6)))
 
 ```
 
@@ -243,10 +250,7 @@ val json = """
 }
 """
 Struktural.assertValues(json,
-        listOf(Pair("people",
-                listOf(Pair("favorite_language", "kotlin")))))
-
-
+    listOf("people" to ("favorite_language" to "kotlin")))
 ```
 
 Using Hamcrest matchers
@@ -269,11 +273,13 @@ val json = """
 }
 """
 validator.assert(json,
-        listOf(Pair("people",
-                listOf(
-                        Pair("name", Matchers.notNullValue()),
-                        Pair("favorite_language", Matchers.equalToIgnoringCase("kotlin")),
-                        Pair("age", Matchers.greaterThan(50))))))
+    listOf(
+        "people" to listOf(
+            "name" to Matchers.notNullValue(),
+            "favorite_language" to Matchers.equalToIgnoringCase("kotlin"),
+            "age" to Matchers.greaterThan(50)
+        )
+    ))
 ```
 
 
@@ -467,5 +473,3 @@ class LanguageClassifierApiTests : Spek( {
      - extra validation functions
 - Currently the project has a hard dependency on Apache Http Client and Jackson Json parsing. Eventually these *may* be extracted out so that you can choose your library.
 - Much of the inernal code will be cleaned up and better organized in time. This was a few day proof-of-concept project.
-
-

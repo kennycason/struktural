@@ -2,6 +2,7 @@ package com.kennycason.struktural
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.kennycason.struktural.error.Error
 import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
@@ -10,7 +11,11 @@ import com.kennycason.struktural.exception.StrukturalException
  * Test fields not missing
  */
 class JsonStructureValidator {
-    private val objectMapper = ObjectMapper()
+    private var objectMapper: ObjectMapper = ObjectMapper()
+
+    fun setObjectMapper(objectMapper: ObjectMapper) {
+        this.objectMapper = ObjectMapper(YAMLFactory())
+    }
 
     fun assert(jsonString: String, fields: Iterable<Any>) = assert(objectMapper.readTree(jsonString), fields)
 
@@ -52,13 +57,14 @@ class JsonStructureValidator {
                 val nestedJsonNode = json.get(fieldName)
                 if (nestedJsonNode.isArray) { // walk over each item in the array and apply the nested checks
                     nestedJsonNode.forEach { node ->
-                        walkFields(node, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
+                        walkFields(node, nestedFields.requireNoNulls(), "$path/$fieldName", errors)
                     }
                 } else { // is nested object, recur
-                    walkFields(nestedJsonNode, nestedFields.requireNoNulls(), path + '/' + fieldName, errors)
+                    walkFields(nestedJsonNode, nestedFields.requireNoNulls(), "$path/$fieldName", errors)
                 }
             } else {
-                throw InvalidInputException("Input must either be a String field name, or a Iterable of fields. Found [${field::class.simpleName?.toLowerCase()}]")
+                throw InvalidInputException("Input must either be a String field name, or a Iterable of fields. " +
+                    "Found [${field::class.simpleName?.lowercase()}]")
             }
         }
     }
@@ -72,13 +78,13 @@ class JsonStructureValidator {
         }
         // test structure of Pair<String, Any>
         if (field.first !is String) {
-            throw InvalidInputException("First value for nested input must be a String. Found [${field.first!!::class.simpleName?.toLowerCase()}]")
+            throw InvalidInputException("First value for nested input must be a String. Found [${field.first!!::class.simpleName?.lowercase()}]")
         }
         if (field.second !is Iterable<*>) {
-            throw InvalidInputException("First value for nested input must be a Iterable. Found [${field.second!!::class.simpleName?.toLowerCase()}]")
+            throw InvalidInputException("First value for nested input must be a Iterable. Found [${field.second!!::class.simpleName?.lowercase()}]")
         }
     }
 
-    private fun normalizeFieldPath(path: String, field: String) = (path + '/' + field).replace(Regex("^/"), "")
+    private fun normalizeFieldPath(path: String, field: String) = ("$path/$field").replace(Regex("^/"), "")
 
 }

@@ -1,18 +1,14 @@
 package com.kennycason.struktural.yaml
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.kennycason.struktural.Mode
-import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.data.FileJsonLoader
 import com.kennycason.struktural.data.InputStreamJsonLoader
 import com.kennycason.struktural.data.JsonLoader
 import com.kennycason.struktural.data.web.HttpJsonLoader
 import com.kennycason.struktural.data.web.HttpMethod
 import com.kennycason.struktural.data.web.Request
+import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.yaml.transform.ExpectsMapTransform
-import com.kennycason.struktural.yaml.transform.IdentityValueTransform
-import com.kennycason.struktural.yaml.transform.TypeValueTransform
-import com.kennycason.struktural.yaml.transform.ValueTransform
 import org.apache.http.Header
 import org.apache.http.message.BasicHeader
 import java.io.File
@@ -28,10 +24,10 @@ class TestsParser {
         if (!testModel.contains("tests")) {
             throw InvalidInputException("Test Yaml must have 'tests' block")
         }
-        if (testModel.get("tests") !is List<*>) {
+        if (testModel["tests"] !is List<*>) {
             throw InvalidInputException("Test Yaml 'tests' block must be list")
         }
-        val testsList = testModel.get("tests") as List<Map<String, Any>>
+        val testsList = testModel["tests"] as List<Map<String, Any>>
 
         val tests = mutableListOf<TestCase>()
         testsList.forEach { node ->
@@ -48,8 +44,8 @@ class TestsParser {
                 mode = mode,
                 jsonLoader = parseJsonLoader(test, config),
                 expects = when (mode) {
-                    Mode.STRUCTURE -> expectsMapTransform.transformToAny(test.get("expects") as Iterable<Any>)
-                    Mode.TYPE, Mode.VALUE -> expectsMapTransform.transformToPairs(test.get("expects") as Iterable<Map<String, Any>>)
+                    Mode.STRUCTURE -> expectsMapTransform.transformToAny(test["expects"] as Iterable<Any>)
+                    Mode.TYPE, Mode.VALUE -> expectsMapTransform.transformToPairs(test["expects"] as Iterable<Map<String, Any>>)
                 })
     }
 
@@ -57,7 +53,7 @@ class TestsParser {
         if (!test.contains("mode")) {
             throw InvalidInputException("Test must have 'mode' block. Possible values: (missing, type, value)")
         }
-        return when (test.get("mode")) {
+        return when (test["mode"]) {
             "structure" -> Mode.STRUCTURE
             "type" -> Mode.TYPE
             "value" -> Mode.VALUE
@@ -69,19 +65,19 @@ class TestsParser {
         if (!test.contains("data")) {
             throw InvalidInputException("Test must have 'data' block.")
         }
-        val dataNode = test.get("data") as Map<String, Any>
+        val dataNode = test["data"] as Map<String, Any>
         if (dataNode.contains("resource")) {
-            val resource = javaClass.getResourceAsStream(dataNode.get("resource") as String)
+            val resource = javaClass.getResourceAsStream(dataNode["resource"] as String)
             if (resource == null) {
                 throw InvalidInputException("Provided resource $resource is null")
             }
             return InputStreamJsonLoader(resource)
         }
         if (dataNode.contains("file")) {
-            return FileJsonLoader(File(dataNode.get("file") as String))
+            return FileJsonLoader(File(dataNode["file"] as String))
         }
         if (dataNode.contains("request")) {
-            return HttpJsonLoader(config, parseRequest(dataNode.get("request") as Map<String, Any>))
+            return HttpJsonLoader(config, parseRequest(dataNode["request"] as Map<String, Any>))
         }
         throw InvalidInputException("'data' block must contain either 'resource', 'file', or 'request' block.")
     }
@@ -94,17 +90,17 @@ class TestsParser {
             throw InvalidInputException("Request block must have 'method' block.")
         }
         return Request(
-                uri = requestNode.get("uri") as String,
+                uri = requestNode["uri"] as String,
                 method = parseHttpMethod(requestNode),
                 parameters = parseParameters(requestNode),
-                body = if (requestNode.contains("body")) { requestNode.get("body") as String } else { null },
+                body = if (requestNode.contains("body")) { requestNode["body"] as String } else { null },
                 headers = parseHeaders(requestNode))
     }
 
     private fun parseHttpMethod(requestNode: Map<String, Any>): HttpMethod {
         if (!requestNode.contains("method")) { return HttpMethod.GET }
 
-        val method = requestNode.get("method") as String
+        val method = requestNode["method"] as String
         return when (method) {
             "GET" -> HttpMethod.GET
             "POST" -> HttpMethod.POST
@@ -118,7 +114,7 @@ class TestsParser {
         if (!requestNode.contains("headers")) {
             return emptyList()
         }
-        return (requestNode.get("headers") as List<String>)
+        return (requestNode["headers"] as List<String>)
                 .map {header ->
                     if (!header.contains(':')) {
                         throw InvalidInputException("Invalid header format. Must contain ':' between key: value")
@@ -131,10 +127,10 @@ class TestsParser {
 
     private fun parseParameters(requestNode: Map<String, Any>): List<String> {
         if (!requestNode.contains("params")
-                || requestNode.get("params") == null) {
+                || requestNode["params"] == null) {
             return emptyList()
         }
-        return requestNode.get("params") as List<String>
+        return requestNode["params"] as List<String>
     }
 
 }

@@ -17,17 +17,17 @@ class JsonTypeValidatorTest {
 
     @Test(expected = StrukturalException::class)
     fun emptyJson() {
-        validator.assert("{}", listOf(Pair("foo", Int::class)))
+        validator.assert("{}", listOf("foo" to Int::class))
     }
 
     @Test
     fun singleField() {
-        validator.assert("""{"foo": "bar"}""", listOf(Pair("foo", String::class)))
+        validator.assert("""{"foo": "bar"}""", listOf("foo" to String::class))
     }
 
     @Test(expected = StrukturalException::class)
     fun singleFieldInvalidType() {
-        validator.assert("""{"foo": "bar"}""", listOf(Pair("foo", Int::class)))
+        validator.assert("""{"foo": "bar"}""", listOf("foo" to Int::class))
     }
 
     @Test
@@ -39,9 +39,10 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                 listOf(Pair("foo", String::class),
-                        Pair("nested",
-                               listOf(Pair("foo2", String::class)))))
+                 listOf(
+                     "foo" to String::class,
+                     "nested" to listOf("foo2" to String::class)
+                 ))
     }
 
     @Test
@@ -62,27 +63,35 @@ class JsonTypeValidatorTest {
         """
         // strict number types
         validator.assert(json,
-                 listOf(Pair("name", String::class),
-                        Pair("age", Int::class),
-                        Pair("shoe_size", Float::class),
-                        Pair("favorite_number", Double::class),
-                        Pair("long_number", Long::class),
-                        Pair("random", Array<Any>::class),
-                        Pair("job", Object::class),
-                        Pair("job", listOf(Pair("id", Int::class),
-                                           Pair("title", String::class)))))
+                 listOf(
+                     "name" to String::class,
+                     "age" to Int::class,
+                     "shoe_size" to Float::class,
+                     "favorite_number" to Double::class,
+                     "long_number" to Long::class,
+                     "random" to Array<Any>::class,
+                     "job" to Object::class,
+                     "job" to listOf(
+                         "id" to Int::class,
+                         "title" to String::class
+                     )
+                 ))
 
         // relaxed number types
         validator.assert(json,
-                 listOf(Pair("name", String::class),
-                        Pair("age", Number::class),
-                        Pair("shoe_size", Number::class),
-                        Pair("favorite_number", Number::class),
-                        Pair("long_number", Number::class),
-                        Pair("random", Array<Any>::class),
-                        Pair("job", Object::class),
-                        Pair("job", listOf(Pair("id", Number::class),
-                                           Pair("title", String::class)))))
+                 listOf(
+                     "name" to String::class,
+                     "age" to Number::class,
+                     "shoe_size" to Number::class,
+                     "favorite_number" to Number::class,
+                     "long_number" to Number::class,
+                     "random" to Array<Any>::class,
+                     "job" to Object::class,
+                     "job" to listOf(
+                         "id" to Number::class,
+                         "title" to String::class
+                     )
+                 ))
     }
 
     @Test
@@ -94,8 +103,10 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("id", String::class),
-                        Pair("numbers", Array<Any>::class)))
+                listOf(
+                    "id" to String::class,
+                    "numbers" to Array<Any>::class
+                ))
     }
 
     @Test(expected = StrukturalException::class)
@@ -107,8 +118,10 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("id", String::class),
-                        Pair("numbers", listOf("does_not_exist"))))
+                listOf(
+                    "id" to String::class,
+                    "numbers" to listOf("does_not_exist")
+                ))
     }
 
     @Test
@@ -132,9 +145,12 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("languages",
-                        listOf(Pair("name", String::class),
-                               Pair("coolness", Number::class)))))
+                listOf(
+                    "languages" to listOf(
+                        "name" to String::class,
+                        "coolness" to Number::class
+                    )
+                ))
     }
 
     @Test
@@ -145,7 +161,7 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("foo", Nullable(String::class))))
+                listOf("foo" to Nullable(String::class)))
 
         val json2 = """
         {
@@ -153,7 +169,7 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json2,
-                listOf(Pair("foo", Nullable(String::class))))
+                listOf("foo" to Nullable(String::class)))
     }
 
     @Test(expected = StrukturalException::class)
@@ -164,7 +180,7 @@ class JsonTypeValidatorTest {
         }
         """
         validator.assert(json,
-                listOf(Pair("foo", String::class)))
+                listOf("foo" to String::class))
     }
 
 

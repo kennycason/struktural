@@ -7,12 +7,9 @@ import org.apache.http.client.methods.HttpDelete
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPatch
 import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClientBuilder
-import java.io.IOException
 import java.net.URI
-import java.nio.charset.Charset
 
 /**
  * Created by kenny on 5/25/17.
@@ -30,7 +27,8 @@ class HttpRequests() {
                 HttpClientBuilder.create()
                         .build()
                         .execute(request)
-                        .getEntity().getContent())
+                        .entity.content
+        )
     }
 
     fun post(uri: URI,
@@ -39,7 +37,7 @@ class HttpRequests() {
         val request = HttpPost(uri)
         request.setHeaders(headers)
         if (data != null) {
-            request.setEntity(StringEntity(data))
+            request.entity = StringEntity(data)
         }
 
         println("POST $uri")
@@ -47,7 +45,8 @@ class HttpRequests() {
                 HttpClientBuilder.create()
                         .build()
                         .execute(request)
-                        .getEntity().getContent())
+                        .entity.content
+        )
     }
 
     fun patch(uri: URI,
@@ -56,7 +55,7 @@ class HttpRequests() {
         val request = HttpPatch(uri)
         request.setHeaders(headers)
         if (data != null) {
-            request.setEntity(StringEntity(data))
+            request.entity = StringEntity(data)
         }
 
         println("PATCH $uri")
@@ -64,7 +63,8 @@ class HttpRequests() {
                 HttpClientBuilder.create()
                         .build()
                         .execute(request)
-                        .getEntity().getContent())
+                        .entity.content
+        )
     }
 
     fun delete(uri: URI,
@@ -77,7 +77,8 @@ class HttpRequests() {
                 HttpClientBuilder.create()
                         .build()
                         .execute(request)
-                        .getEntity().getContent())
+                        .entity.content
+        )
     }
 
 }

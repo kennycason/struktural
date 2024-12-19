@@ -13,13 +13,17 @@ object Struktural {
     private val jsonTypeValidator = JsonTypeValidator()
     private val jsonValueValidator = JsonValueValidator()
     private val yamlBackedValidator = YamlBackedValidator()
+    private var defaultObjectMapper = ObjectMapper()
 
     fun setObjectMapper(objectMapper: ObjectMapper) {
+        defaultObjectMapper = objectMapper
         jsonMissingValidator.setObjectMapper(objectMapper)
         jsonTypeValidator.setObjectMapper(objectMapper)
         jsonValueValidator.setObjectMapper(objectMapper)
         yamlBackedValidator.setObjectMapper(objectMapper)
     }
+
+    fun getObjectMapper() = defaultObjectMapper
 
     fun assertStructure(jsonString: String, fields: Iterable<Any>) = jsonMissingValidator.assert(jsonString, fields)
     fun assertStructure(json: JsonNode, fields: Iterable<Any>) = jsonMissingValidator.assert(json, fields)

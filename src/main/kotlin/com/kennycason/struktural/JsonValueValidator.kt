@@ -8,17 +8,15 @@ import com.kennycason.struktural.exception.InvalidInputException
 import com.kennycason.struktural.exception.StrukturalException
 import com.kennycason.struktural.json.JsonNodeValueValidator
 
-/**
- * Test fields not missing and field value.
- *
- */
+
 class JsonValueValidator {
 
     private var objectMapper: ObjectMapper = ObjectMapper()
 
     fun setObjectMapper(objectMapper: ObjectMapper) {
-        this.objectMapper = ObjectMapper(YAMLFactory())
+        this.objectMapper = objectMapper
     }
+
 
     private val jsonNodeValueValidator = JsonNodeValueValidator()
 

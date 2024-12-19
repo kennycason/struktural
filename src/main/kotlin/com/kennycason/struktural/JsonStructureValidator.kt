@@ -14,7 +14,7 @@ class JsonStructureValidator {
     private var objectMapper: ObjectMapper = ObjectMapper()
 
     fun setObjectMapper(objectMapper: ObjectMapper) {
-        this.objectMapper = ObjectMapper(YAMLFactory())
+        this.objectMapper = objectMapper
     }
 
     fun assert(jsonString: String, fields: Iterable<Any>) = assert(objectMapper.readTree(jsonString), fields)

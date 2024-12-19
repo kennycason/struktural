@@ -44,6 +44,230 @@ Struktural is available on Maven Central. (Or will be very soon)
 
 ### Kotlin API
 
+
+#### Assert Json Types
+
+```json
+{
+    "game_title": "Super Metroid",
+    "release_year": 1994,
+    "characters": [
+        {
+            "name": "Samus Aran",
+            "abilities": ["Morph Ball", "Missiles", "Power Bombs"],
+            "health": 99,
+            "weapon_power": 100.5
+        },
+        {
+            "name": "Ridley",
+            "abilities": ["Fire Breath", "Tail Whip"],
+            "health": 5000,
+            "weapon_power": 200.0
+        }
+    ],
+    "settings": {
+        "planet": "Zebes",
+        "areas": [
+            {
+                "name": "Brinstar",
+                "environment": "Jungle"
+            },
+            {
+                "name": "Norfair",
+                "environment": "Lava"
+            }
+        ]
+    },
+    "game_modes": ["SINGLE_PLAYER"],
+    "game_mode": "SINGLE_PLAYER",
+    "is_remake": null
+}
+```
+
+Lambda syntax (new)
+
+```kotlin
+assertJsonTypes(json) {
+    string("game_title")
+    integer("release_year")
+    nullableBoolean("is_remake")
+
+    array("characters") {
+        string("name")
+        array("abilities") {
+            string("")
+        }
+        integer("health")
+        decimal("weapon_power")
+    }
+
+    objectField("settings") {
+        string("planet")
+        array("areas") {
+            string("name")
+            string("environment")
+        }
+    }
+
+    array("game_modes") { }
+
+    custom("release_year", "a valid SNES release year") {
+        it.isInt && it.asInt() in 1990..2000
+    }
+
+    enum("game_mode") { arrayOf("SINGLE_PLAYER", "MULTIPLAYER", "CO-OP") }
+}
+```
+
+```kotlin
+val json = """
+{
+    "name": "kenny",
+    "age": 64,
+    "shoe_size": 10.5,
+    "favorite_number": 2.718281828459045235,
+    "long_number": 1223235345342348,
+    "random": [1,2,3,4,5,6],
+    "job": {
+        "id": 123456,
+        "title": "Software Engineer"
+    }
+}
+"""
+```
+
+
+Strict number types
+
+```kotlin
+validator.assert(json,
+     listOf(
+         "name" to String::class,
+         "age" to Int::class,
+         "shoe_size" to Float::class,
+         "favorite_number" to Double::class,
+         "long_number" to Long::class,
+         "random" to Array<Any>::class,
+         "job" to Object::class,
+         "job" to listOf(
+             "id" to Int::class,
+             "title" to String::class
+         )
+     ))
+```
+
+
+Relaxed number types
+
+```kotlin
+validator.assert(json,
+     listOf(
+         "name" to String::class,
+         "age" to Number::class,
+         "shoe_size" to Number::class,
+         "favorite_number" to Number::class,
+         "long_number" to Number::class,
+         "random" to Array<Any>::class,
+         "job" to Object::class,
+         "job" to listOf(
+             "id" to Number::class,
+             "title" to String::class
+         )
+     ))
+```
+
+
+Nested array of objects
+
+```kotlin
+val json = """
+{
+    "languages": [
+        {
+            "name": "kotlin",
+            "coolness": 100
+        },
+        {
+            "name": "java",
+            "coolness": 50
+        }
+    ]
+}
+
+"""
+```
+
+Lambda syntax (new)
+
+```kotlin
+assertJsonTypes(json) {
+    array("languages") {
+        string("name")
+        number("coolness")
+    }
+}
+```
+
+Alternative syntax
+
+```kotlin
+validator.assert(json,
+    listOf(
+        "languages" to listOf(
+            "name" to String::class,
+            "coolness" to Number::class
+        )
+    ))
+```
+
+Nullable values
+
+```kotlin
+val json = """
+{
+    "foo": null
+}
+"""
+Struktural.assertTypes(json,
+    listOf("foo" to Nullable(String::class)))
+```
+
+
+
+Date Time
+
+```json
+{
+    "game_release_date": "1994-03-19",
+    "last_updated": "2024-12-18T15:30:00"
+}
+```
+
+```kotlin
+assertJsonTypes(json) {
+    date("game_release_date", "yyyy-MM-dd")
+    dateTime("last_updated", "yyyy-MM-dd'T'HH:mm:ss")
+}
+```
+    
+Regex
+
+```json
+{
+    "player_name": "Samus_Aran",
+    "player_code": "SM12345"
+}
+``` 
+
+```kotlin
+assertJsonTypes(json) {
+    matchesRegex("player_name", "^[a-zA-Z0-9_]+$".toRegex()) // Alphanumeric with underscores
+    matchesRegex("player_code", "^SM[0-9]{5}$".toRegex()) // Starts with 'SM' followed by 5 digits
+}
+```
+
+
+
 #### Assert Field Structure
 
 ```kotlin
@@ -85,99 +309,8 @@ Struktural.assertStructure(json,
 ```
 
 
-#### Assert Field Type Structure
-```kotlin
-val json = """
-{
-    "name": "kenny",
-    "age": 64,
-    "shoe_size": 10.5,
-    "favorite_number": 2.718281828459045235,
-    "long_number": 1223235345342348,
-    "random": [1,2,3,4,5,6],
-    "job": {
-        "id": 123456,
-        "title": "Software Engineer"
-    }
-}
-"""
-```
 
-Strict number types
 
-```kotlin
-validator.assert(json,
-     listOf(
-         "name" to String::class,
-         "age" to Int::class,
-         "shoe_size" to Float::class,
-         "favorite_number" to Double::class,
-         "long_number" to Long::class,
-         "random" to Array<Any>::class,
-         "job" to Object::class,
-         "job" to listOf(
-             "id" to Int::class,
-             "title" to String::class
-         )
-     ))
-```
-
-Relaxed number types
-```kotlin
-validator.assert(json,
-     listOf(
-         "name" to String::class,
-         "age" to Number::class,
-         "shoe_size" to Number::class,
-         "favorite_number" to Number::class,
-         "long_number" to Number::class,
-         "random" to Array<Any>::class,
-         "job" to Object::class,
-         "job" to listOf(
-             "id" to Number::class,
-             "title" to String::class
-         )
-     ))
-```
-
-Nested array of objects
-
-```kotlin
-val json = """
-{
-    "languages": [
-        {
-            "name": "kotlin",
-            "coolness": 100
-        },
-        {
-            "name": "java",
-            "coolness": 50
-        }
-    ]
-}
-
-"""
-validator.assert(json,
-    listOf(
-        "languages" to listOf(
-            "name" to String::class,
-            "coolness" to Number::class
-        )
-    ))
-```
-
-Nullable values
-
-```kotlin
-val json = """
-{
-    "foo": null
-}
-"""
-Struktural.assertTypes(json,
-    listOf("foo" to Nullable(String::class)))
-```
 
 #### Assert Field Values
 

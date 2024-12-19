@@ -20,8 +20,9 @@ class JsonTypeValidator {
     private val jsonNodeTypeValidator = JsonNodeTypeValidator()
 
     fun setObjectMapper(objectMapper: ObjectMapper) {
-        this.objectMapper = ObjectMapper(YAMLFactory())
+        this.objectMapper = objectMapper
     }
+
 
     fun assert(jsonString: String, fieldTypes: Iterable<Pair<String, Any>>) = assert(objectMapper.readTree(jsonString), fieldTypes)
 
